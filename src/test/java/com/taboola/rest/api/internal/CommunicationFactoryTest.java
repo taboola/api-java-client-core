@@ -27,9 +27,9 @@ public class CommunicationFactoryTest {
     private CommunicationFactory testInstance;
 
     public interface TestEndpoint {
-            @GET("/users/current/allowed-accounts")
-            @Headers("Content-Type: application/json")
-            Object getTestObject(@Header("Authorization") String accessToken) throws RestAPIException;
+        @GET("/for-testing")
+        @Headers("Content-Type: application/json")
+        Object getTestObject(@Header("Authorization") String accessToken) throws RestAPIException;
     }
 
     @Before
