@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.RestAPIConnectivityException;
 import com.taboola.rest.api.exceptions.RestAPIRequestException;
 import com.taboola.rest.api.exceptions.RestAPIUnauthorizedException;
+import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.model.APIError;
 
 import okhttp3.ResponseBody;
@@ -32,13 +33,15 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
     private static final int INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE = 500;
 
     private final ObjectMapper objectMapper;
+    private final ExceptionFactory exceptionFactory;
 
-    public static SynchronousCallAdapterFactory create(ObjectMapper objectMapper) {
-        return new SynchronousCallAdapterFactory(objectMapper);
+    public static SynchronousCallAdapterFactory create(ObjectMapper objectMapper, ExceptionFactory exceptionFactory) {
+        return new SynchronousCallAdapterFactory(objectMapper, exceptionFactory);
     }
 
-    private SynchronousCallAdapterFactory(ObjectMapper objectMapper) {
+    private SynchronousCallAdapterFactory(ObjectMapper objectMapper, ExceptionFactory exceptionFactory) {
         this.objectMapper = objectMapper;
+        this.exceptionFactory = exceptionFactory;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
 
             @Override
             public Object adapt(Call<Object> call) {
-                Object obj;
+                Object obj = null;
                 try {
                     Response<Object> response = call.execute();
                     if(response.isSuccessful()) {
@@ -65,18 +68,22 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
                     } else {
                         int responseCode = response.code();
                         if(responseCode == UNAUTHORIZED_HTTP_STATUS_CODE) {
-                            throw new RestAPIUnauthorizedException(safeCreateCauseException(response));
+                            exceptionFactory.handleAndThrowUnauthorizedException(safeCreateCauseException(response));
 
                         } else if(responseCode >= BAD_REQUEST_HTTP_STATUS_CODE && responseCode < INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE) {
-                            throw new RestAPIRequestException(responseCode, normalizeError(parseError(response)));
+                            exceptionFactory.handleAndThrowRequestException(responseCode, normalizeError(parseError(response)));
                         }
 
-                        throw new RestAPIConnectivityException(safeCreateCauseException(response), responseCode);
+                        exceptionFactory.handleAndThrowConnectivityException(safeCreateCauseException(response), responseCode);
                     }
 
                 } catch (IOException e) {
                     logger.error(e);
-                    throw new RestAPIConnectivityException(e);
+                    exceptionFactory.handleAndThrowConnectivityException(e);
+                }
+
+                if(obj == null) {
+                    throw new RestAPIConnectivityException();
                 }
 
                 return obj;

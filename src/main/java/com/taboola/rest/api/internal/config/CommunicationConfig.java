@@ -2,6 +2,7 @@ package com.taboola.rest.api.internal.config;
 
 import java.util.Collection;
 
+import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.model.RequestHeader;
 
 /**
@@ -20,9 +21,11 @@ public class CommunicationConfig {
     private final long keepAliveDurationMillis;
     private final boolean debug;
     private final Collection<RequestHeader> headers;
+    private final ExceptionFactory exceptionFactory;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
-                               Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis, Collection<RequestHeader> headers, boolean debug) {
+                               Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
+                               Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -31,6 +34,7 @@ public class CommunicationConfig {
         this.keepAliveDurationMillis = keepAliveDurationMillis;
         this.headers = headers;
         this.debug = debug;
+        this.exceptionFactory = exceptionFactory;
     }
 
     public String getBaseUrl() {
@@ -65,17 +69,22 @@ public class CommunicationConfig {
         return debug;
     }
 
+    public ExceptionFactory getExceptionFactory() {
+        return exceptionFactory;
+    }
+
     @Override
     public String toString() {
         return "CommunicationConfig{" +
-        "baseUrl='" + baseUrl + '\'' +
-        ", connectionTimeoutMillis=" + connectionTimeoutMillis +
-        ", readTimeoutMillis=" + readTimeoutMillis +
-        ", writeTimeoutMillis=" + writeTimeoutMillis +
-        ", maxIdleConnections=" + maxIdleConnections +
-        ", keepAliveDurationMillis=" + keepAliveDurationMillis +
-        ", headers='" + headers + '\'' +
-        ", debug=" + debug +
-        '}';
+                "baseUrl='" + baseUrl + '\'' +
+                ", connectionTimeoutMillis=" + connectionTimeoutMillis +
+                ", readTimeoutMillis=" + readTimeoutMillis +
+                ", writeTimeoutMillis=" + writeTimeoutMillis +
+                ", maxIdleConnections=" + maxIdleConnections +
+                ", keepAliveDurationMillis=" + keepAliveDurationMillis +
+                ", debug=" + debug +
+                ", headers=" + headers +
+                ", exceptionFactory=" + exceptionFactory +
+                '}';
     }
 }

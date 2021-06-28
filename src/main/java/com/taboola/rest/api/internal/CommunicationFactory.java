@@ -50,7 +50,7 @@ public final class CommunicationFactory {
         return new Retrofit.Builder()
                             .addConverterFactory(StringConverterFactory.create())
                             .addConverterFactory(JacksonConverterFactory.create(objectMapper))
-                            .addCallAdapterFactory(SynchronousCallAdapterFactory.create(objectMapper))
+                            .addCallAdapterFactory(SynchronousCallAdapterFactory.create(objectMapper, config.getExceptionFactory()))
                             .client(createOkHttpClient(config));
     }
 

@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.taboola.rest.api.exceptions.factories.DefaultExceptionFactory;
+import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.CommunicationFactory;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.config.SerializationConfig;
@@ -49,6 +51,7 @@ public class RestAPIClient {
         private static final String DEFAULT_REST_API_VERSION = "UNDEFINED";
         private static final String DEFAULT_USER_AGENT_SUFFIX = "UNDEFINED";
         private static final String DEFAULT_USER_AGENT_PREFIX = "UNDEFINED";
+        private static final ExceptionFactory DEFAULT_EXCEPTION_FACTORY = new DefaultExceptionFactory();
 
         private String baseUrl;
         private Long writeTimeoutMillis;
@@ -62,6 +65,7 @@ public class RestAPIClient {
         private String userAgentPrefix;
         private String userAgentSuffix;
         private String restAPIVersion;
+        private ExceptionFactory exceptionFactory;
 
         public RestAPIClientBuilder setBaseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -123,12 +127,17 @@ public class RestAPIClient {
             return this;
         }
 
+        public RestAPIClientBuilder setExceptionFactory(ExceptionFactory exceptionFactory) {
+            this.exceptionFactory = exceptionFactory;
+            return this;
+        }
+
         public RestAPIClient build() {
             organizeState();
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, headers, debug);
+                                                                keepAliveDurationMillis, headers, debug, exceptionFactory);
             return new RestAPIClient(new CommunicationFactory(config, serializationConfig));
         }
 
@@ -186,6 +195,10 @@ public class RestAPIClient {
 
             if (serializationConfig == null) {
                 serializationConfig = DEFAULT_SERIALIZATION_CONFIG;
+            }
+
+            if(exceptionFactory == null) {
+                exceptionFactory = DEFAULT_EXCEPTION_FACTORY;
             }
         }
     }

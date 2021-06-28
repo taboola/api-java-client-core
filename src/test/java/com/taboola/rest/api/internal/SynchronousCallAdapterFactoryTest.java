@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.RestAPIRequestException;
+import com.taboola.rest.api.exceptions.factories.DefaultExceptionFactory;
 import com.taboola.rest.api.model.APIError;
 
 import retrofit2.Call;
@@ -29,7 +30,7 @@ public class SynchronousCallAdapterFactoryTest {
 
     @Before
     public void beforeTest() {
-        testInstance = SynchronousCallAdapterFactory.create(new ObjectMapper());
+        testInstance = SynchronousCallAdapterFactory.create(new ObjectMapper(), new DefaultExceptionFactory());
     }
 
     @Test
