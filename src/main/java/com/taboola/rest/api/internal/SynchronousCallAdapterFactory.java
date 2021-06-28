@@ -1,6 +1,7 @@
 package com.taboola.rest.api.internal;
 
 import com.taboola.rest.api.exceptions.RestAPIConnectivityException;
+import com.taboola.rest.api.exceptions.RestAPIRequestException;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 
 import org.apache.logging.log4j.LogManager;
@@ -64,7 +65,8 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
                             exceptionFactory.handleAndThrowUnauthorizedException(safeCreateCauseException(response));
 
                         } else if(responseCode >= BAD_REQUEST_HTTP_STATUS_CODE && responseCode < INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE) {
-                            exceptionFactory.handleAndThrowRequestException(responseCode, safeGetErrorPayloadBytes(response), normalizeErrorMsg(response.message()));
+                            String message = normalizeErrorMsg(response.message());
+                            exceptionFactory.handleAndThrowRequestException(responseCode, safeGetErrorPayloadBytes(response, message, responseCode), message);
                         }
 
                         exceptionFactory.handleAndThrowConnectivityException(safeCreateCauseException(response), responseCode);
@@ -84,12 +86,12 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
         };
     }
 
-    private byte[] safeGetErrorPayloadBytes(Response<Object> response) throws IOException {
+    private byte[] safeGetErrorPayloadBytes(Response<Object> response, String message, int responseCode) throws IOException {
         try {
             return response.errorBody().bytes();
         } catch(Throwable t) {
             logger.warn("Failed to extract byte[] from response error body", t);
-            throw new RestAPIConnectivityException();
+            throw new RestAPIRequestException("message: %s, responseCode: %s", message, responseCode);
         }
     }
 
