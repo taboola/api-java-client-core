@@ -8,11 +8,11 @@ package com.taboola.rest.api.exceptions.factories;
  */
 public interface ExceptionFactory {
 
-    void handleAndThrowUnauthorizedException(Throwable cause);
+    RuntimeException createUnauthorizedException(Throwable cause);
 
-    void handleAndThrowRequestException(int responseCode, byte[] errorBytes, String message);
+    RuntimeException createRequestException(int responseCode, byte[] errorBytes, String message);
 
-    void handleAndThrowConnectivityException(Throwable cause, int responseCode);
+    RuntimeException createConnectivityException(Throwable cause, int responseCode);
 
-    void handleAndThrowConnectivityException(Throwable cause);
+    RuntimeException createConnectivityException(Throwable cause);
 }

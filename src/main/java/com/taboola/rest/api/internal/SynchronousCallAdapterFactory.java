@@ -62,19 +62,19 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
                     } else {
                         int responseCode = response.code();
                         if(responseCode == UNAUTHORIZED_HTTP_STATUS_CODE) {
-                            exceptionFactory.handleAndThrowUnauthorizedException(safeCreateCauseException(response));
+                            throwIfNotNull(exceptionFactory.createUnauthorizedException(safeCreateCauseException(response)));
 
                         } else if(responseCode >= BAD_REQUEST_HTTP_STATUS_CODE && responseCode < INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE) {
                             String message = response.message();
-                            exceptionFactory.handleAndThrowRequestException(responseCode, safeGetErrorPayloadBytes(response, message, responseCode), message);
+                            throwIfNotNull(exceptionFactory.createRequestException(responseCode, safeGetErrorPayloadBytes(response, message, responseCode), message));
                         }
 
-                        exceptionFactory.handleAndThrowConnectivityException(safeCreateCauseException(response), responseCode);
+                        throwIfNotNull(exceptionFactory.createConnectivityException(safeCreateCauseException(response), responseCode));
                     }
 
                 } catch (IOException e) {
                     logger.error(e);
-                    exceptionFactory.handleAndThrowConnectivityException(e);
+                    throwIfNotNull(exceptionFactory.createConnectivityException(e));
                 }
 
                 if(obj == null) {
@@ -101,6 +101,12 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
         } catch (Throwable t) {
             logger.warn("Failed to parse API error response", t);
             return new IOException("Failed to parse API error response", t);
+        }
+    }
+
+    private void throwIfNotNull(RuntimeException e) {
+        if(e != null) {
+            throw e;
         }
     }
 }

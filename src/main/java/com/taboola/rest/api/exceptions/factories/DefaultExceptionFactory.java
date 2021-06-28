@@ -14,22 +14,22 @@ import com.taboola.rest.api.internal.MessageHandlingUtils;
 public class DefaultExceptionFactory implements ExceptionFactory {
 
     @Override
-    public void handleAndThrowUnauthorizedException(Throwable cause) {
-        throw new RestAPIUnauthorizedException(cause);
+    public RuntimeException createUnauthorizedException(Throwable cause) {
+        return new RestAPIUnauthorizedException(cause);
     }
 
     @Override
-    public void handleAndThrowRequestException(int responseCode, byte[] errorPayloadBytes, String message) {
-        throw new RestAPIRequestException("message: %s, responseCode: %s", MessageHandlingUtils.normalizeErrorMsg(message), responseCode);
+    public RuntimeException createRequestException(int responseCode, byte[] errorPayloadBytes, String message) {
+        return new RestAPIRequestException("message: %s, responseCode: %s", MessageHandlingUtils.normalizeErrorMsg(message), responseCode);
     }
 
     @Override
-    public void handleAndThrowConnectivityException(Throwable cause, int responseCode) {
-        throw new RestAPIConnectivityException(cause, responseCode);
+    public RuntimeException createConnectivityException(Throwable cause, int responseCode) {
+        return new RestAPIConnectivityException(cause, responseCode);
     }
 
     @Override
-    public void handleAndThrowConnectivityException(Throwable cause) {
-        throw new RestAPIConnectivityException(cause);
+    public RuntimeException createConnectivityException(Throwable cause) {
+        return new RestAPIConnectivityException(cause);
     }
 }
