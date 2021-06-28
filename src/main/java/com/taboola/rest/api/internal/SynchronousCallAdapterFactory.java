@@ -65,7 +65,7 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
                             exceptionFactory.handleAndThrowUnauthorizedException(safeCreateCauseException(response));
 
                         } else if(responseCode >= BAD_REQUEST_HTTP_STATUS_CODE && responseCode < INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE) {
-                            String message = normalizeErrorMsg(response.message());
+                            String message = response.message();
                             exceptionFactory.handleAndThrowRequestException(responseCode, safeGetErrorPayloadBytes(response, message, responseCode), message);
                         }
 
@@ -91,7 +91,7 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
             return response.errorBody().bytes();
         } catch(Throwable t) {
             logger.warn("Failed to extract byte[] from response error body", t);
-            throw new RestAPIRequestException("message: %s, responseCode: %s", message, responseCode);
+            throw new RestAPIRequestException("message: %s, responseCode: %s", MessageHandlingUtils.normalizeErrorMsg(message), responseCode);
         }
     }
 
@@ -102,13 +102,5 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
             logger.warn("Failed to parse API error response", t);
             return new IOException("Failed to parse API error response", t);
         }
-    }
-
-    private String normalizeErrorMsg(String message) {
-        if(message != null) {
-            return message.replaceAll("%", "%%");
-        }
-
-        return "";
     }
 }
