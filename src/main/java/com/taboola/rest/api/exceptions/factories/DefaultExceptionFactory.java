@@ -3,7 +3,6 @@ package com.taboola.rest.api.exceptions.factories;
 import com.taboola.rest.api.exceptions.RestAPIConnectivityException;
 import com.taboola.rest.api.exceptions.RestAPIRequestException;
 import com.taboola.rest.api.exceptions.RestAPIUnauthorizedException;
-import com.taboola.rest.api.model.APIError;
 
 /**
  * Created by vladi.m
@@ -19,8 +18,8 @@ public class DefaultExceptionFactory implements ExceptionFactory {
     }
 
     @Override
-    public void handleAndThrowRequestException(int responseCode, APIError error) {
-        throw new RestAPIRequestException(responseCode, error);
+    public void handleAndThrowRequestException(int responseCode, byte[] errorPayloadBytes, String message) {
+        throw new RestAPIRequestException("message: %s, responseCode: %s", message, responseCode);
     }
 
     @Override

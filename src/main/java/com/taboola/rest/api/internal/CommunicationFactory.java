@@ -2,12 +2,9 @@ package com.taboola.rest.api.internal;
 
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
-import com.taboola.rest.api.internal.config.SerializationConfig;
 import com.taboola.rest.api.internal.interceptors.CommunicationInterceptor;
 import com.taboola.rest.api.internal.interceptors.HeadersInterceptor;
-import com.taboola.rest.api.internal.serialization.SerializationMapperCreator;
 
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
@@ -23,11 +20,9 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  */
 public final class CommunicationFactory {
 
-    private final ObjectMapper objectMapper;
     private final Retrofit retrofit;
 
-    public CommunicationFactory(CommunicationConfig communicationConfig, SerializationConfig serializationConfig) {
-        this.objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+    public CommunicationFactory(CommunicationConfig communicationConfig) {
         Retrofit.Builder retrofitBuilder = createRetrofitBuilder(communicationConfig);
 
         this.retrofit = retrofitBuilder.baseUrl(communicationConfig.getBaseUrl()).build();
@@ -49,8 +44,8 @@ public final class CommunicationFactory {
     private Retrofit.Builder createRetrofitBuilder(CommunicationConfig config) {
         return new Retrofit.Builder()
                             .addConverterFactory(StringConverterFactory.create())
-                            .addConverterFactory(JacksonConverterFactory.create(objectMapper))
-                            .addCallAdapterFactory(SynchronousCallAdapterFactory.create(objectMapper, config.getExceptionFactory()))
+                            .addConverterFactory(JacksonConverterFactory.create(config.getObjectMapper()))
+                            .addCallAdapterFactory(SynchronousCallAdapterFactory.create(config.getExceptionFactory()))
                             .client(createOkHttpClient(config));
     }
 

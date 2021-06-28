@@ -1,7 +1,5 @@
 package com.taboola.rest.api.exceptions;
 
-import com.taboola.rest.api.model.APIError;
-
 /**
  * Created by vladi
  * Date: 10/30/2017
@@ -14,7 +12,7 @@ public class RestAPIRequestException extends RestAPIException {
         super(message, params);
     }
 
-    public RestAPIRequestException(int responseCode, APIError error) {
-        super(error, "Failed to perform API call with response code [%d]", responseCode);
+    public RestAPIRequestException(int responseCode) {
+        super("Failed to perform API call with response code [%d]", responseCode);
     }
 }

@@ -2,6 +2,7 @@ package com.taboola.rest.api.internal.config;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.model.RequestHeader;
 
@@ -22,10 +23,11 @@ public class CommunicationConfig {
     private final boolean debug;
     private final Collection<RequestHeader> headers;
     private final ExceptionFactory exceptionFactory;
+    private final ObjectMapper objectMapper;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
-                               Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory) {
+                               Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory, ObjectMapper objectMapper) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -35,6 +37,7 @@ public class CommunicationConfig {
         this.headers = headers;
         this.debug = debug;
         this.exceptionFactory = exceptionFactory;
+        this.objectMapper = objectMapper;
     }
 
     public String getBaseUrl() {
@@ -73,6 +76,10 @@ public class CommunicationConfig {
         return exceptionFactory;
     }
 
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
     @Override
     public String toString() {
         return "CommunicationConfig{" +
@@ -85,6 +92,7 @@ public class CommunicationConfig {
                 ", debug=" + debug +
                 ", headers=" + headers +
                 ", exceptionFactory=" + exceptionFactory +
+                ", objectMapper=" + objectMapper +
                 '}';
     }
 }

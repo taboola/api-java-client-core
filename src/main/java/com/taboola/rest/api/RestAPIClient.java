@@ -9,12 +9,14 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.factories.DefaultExceptionFactory;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.CommunicationFactory;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.config.SerializationConfig;
 import com.taboola.rest.api.internal.config.UserAgentHeader;
+import com.taboola.rest.api.internal.serialization.SerializationMapperCreator;
 import com.taboola.rest.api.model.RequestHeader;
 
 /**
@@ -66,6 +68,7 @@ public class RestAPIClient {
         private String userAgentSuffix;
         private String restAPIVersion;
         private ExceptionFactory exceptionFactory;
+        private ObjectMapper objectMapper;
 
         public RestAPIClientBuilder setBaseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -132,13 +135,18 @@ public class RestAPIClient {
             return this;
         }
 
+        public RestAPIClientBuilder setObjectMapper(ObjectMapper objectMapper) {
+            this.objectMapper = objectMapper;
+            return this;
+        }
+
         public RestAPIClient build() {
             organizeState();
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                                                                keepAliveDurationMillis, headers, debug, exceptionFactory);
-            return new RestAPIClient(new CommunicationFactory(config, serializationConfig));
+                                                                keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper);
+            return new RestAPIClient(new CommunicationFactory(config));
         }
 
         private Collection<RequestHeader> getAllHeaders(Collection<RequestHeader> clientHeaders, String finalUserAgent) {
@@ -199,6 +207,10 @@ public class RestAPIClient {
 
             if(exceptionFactory == null) {
                 exceptionFactory = DEFAULT_EXCEPTION_FACTORY;
+            }
+
+            if(objectMapper == null) {
+                objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
             }
         }
     }

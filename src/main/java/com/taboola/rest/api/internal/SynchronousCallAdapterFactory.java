@@ -1,13 +1,8 @@
 package com.taboola.rest.api.internal;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.RestAPIConnectivityException;
-import com.taboola.rest.api.exceptions.RestAPIRequestException;
-import com.taboola.rest.api.exceptions.RestAPIUnauthorizedException;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
-import com.taboola.rest.api.model.APIError;
 
-import okhttp3.ResponseBody;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import retrofit2.Call;
@@ -32,15 +27,13 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
     private static final int BAD_REQUEST_HTTP_STATUS_CODE = 400;
     private static final int INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE = 500;
 
-    private final ObjectMapper objectMapper;
     private final ExceptionFactory exceptionFactory;
 
-    public static SynchronousCallAdapterFactory create(ObjectMapper objectMapper, ExceptionFactory exceptionFactory) {
-        return new SynchronousCallAdapterFactory(objectMapper, exceptionFactory);
+    public static SynchronousCallAdapterFactory create(ExceptionFactory exceptionFactory) {
+        return new SynchronousCallAdapterFactory(exceptionFactory);
     }
 
-    private SynchronousCallAdapterFactory(ObjectMapper objectMapper, ExceptionFactory exceptionFactory) {
-        this.objectMapper = objectMapper;
+    private SynchronousCallAdapterFactory(ExceptionFactory exceptionFactory) {
         this.exceptionFactory = exceptionFactory;
     }
 
@@ -71,7 +64,7 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
                             exceptionFactory.handleAndThrowUnauthorizedException(safeCreateCauseException(response));
 
                         } else if(responseCode >= BAD_REQUEST_HTTP_STATUS_CODE && responseCode < INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE) {
-                            exceptionFactory.handleAndThrowRequestException(responseCode, normalizeError(parseError(response)));
+                            exceptionFactory.handleAndThrowRequestException(responseCode, safeGetErrorPayloadBytes(response), normalizeErrorMsg(response.message()));
                         }
 
                         exceptionFactory.handleAndThrowConnectivityException(safeCreateCauseException(response), responseCode);
@@ -91,6 +84,15 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
         };
     }
 
+    private byte[] safeGetErrorPayloadBytes(Response<Object> response) throws IOException {
+        try {
+            return response.errorBody().bytes();
+        } catch(Throwable t) {
+            logger.warn("Failed to extract byte[] from response error body", t);
+            throw new RestAPIConnectivityException();
+        }
+    }
+
     private IOException safeCreateCauseException(Response<Object> response) {
         try {
             return new IOException(response.errorBody().string());
@@ -100,22 +102,11 @@ public class SynchronousCallAdapterFactory  extends CallAdapter.Factory {
         }
     }
 
-    private APIError parseError(Response errorResponse) {
-        ResponseBody errorBody = errorResponse.errorBody();
-        try {
-            return objectMapper.readValue(errorBody.bytes(), APIError.class);
-        } catch (Throwable e) {
-            logger.warn("Failed to parse API error response object [{}]", errorResponse.message());
-            return new APIError(errorResponse.message(), errorResponse.code());
-        }
-    }
-
-    APIError normalizeError(APIError error) {
-        String message = error.getMessage();
+    private String normalizeErrorMsg(String message) {
         if(message != null) {
-            error.setMessage(message.replaceAll("%", "%%"));
+            return message.replaceAll("%", "%%");
         }
 
-        return error;
+        return "";
     }
 }
