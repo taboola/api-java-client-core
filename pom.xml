@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.taboola</groupId>
-    <artifactId>rest-api-sdk-core</artifactId>
+    <artifactId>api-java-client-core</artifactId>
     <version>1.0.0</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -30,9 +30,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/taboola/backstage-api-java-client.git</connection>
-        <developerConnection>scm:git:ssh://github.com:taboola/backstage-api-java-client.git</developerConnection>
-        <url>http://github.com/taboola/backstage-api-java-client/tree/master</url>
+        <connection>scm:git:git://github.com/taboola/api-java-client-core.git</connection>
+        <developerConnection>scm:git:ssh://github.com:taboola/api-java-client-core.git</developerConnection>
+        <url>http://github.com/taboola/api-java-client-core/tree/master</url>
     </scm>
 
     <distributionManagement>
