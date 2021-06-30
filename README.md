@@ -13,7 +13,6 @@ Easily create Rest API clients by defining endpoint mappings and models that is 
 
 ## 1. Getting Started
 
-
 ### 1.1 Create Rest Client
 First you will need _RestAPIClient.java_ object
 ```
