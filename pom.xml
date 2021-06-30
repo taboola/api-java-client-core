@@ -9,7 +9,7 @@
     <version>1.0.0</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Rest API SDK core</description>
+    <description>API Java client core</description>
     <url>https://github.com/taboola/rest-api-sdk-core</url>
 
     <licenses>
