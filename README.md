@@ -1,7 +1,7 @@
 ## Rest API SDK Core
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.taboola/rest-api-sdk-core/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.taboola/rest-api-sdk-core)
-[![Build Status](https://travis-ci.org/taboola/rest-api-sdk-core.svg?branch=master)](https://travis-ci.org/taboola/rest-api-sdk-core)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.taboola/api-java-client-core/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.taboola/api-java-client-core)
+[![Build Status](https://travis-ci.org/taboola/api-java-client-core.svg?branch=master)](https://travis-ci.org/taboola/api-java-client-core)
 
 ### Table of Contents
 1. [Getting Started](#1-getting-started)
@@ -67,7 +67,7 @@ If your project is built with Maven add following to your pom file:
 ```
 <dependency>
     <groupId>com.taboola</groupId>
-    <artifactId>rest-api-sdk-core</artifactId>
+    <artifactId>api-java-client-core</artifactId>
     <version>x.y.z</version>
 </dependency>
 ```
@@ -75,8 +75,8 @@ If your project is built with Maven add following to your pom file:
 If your project is built with Gradle add following to your gradle setting file:
 
 ```
-// https://mvnrepository.com/artifact/com.taboola/rest-api-sdk-core
-compile group: 'com.taboola', name: 'rest-api-sdk-core', version: 'x.y.z'
+// https://mvnrepository.com/artifact/com.taboola/api-java-client-core
+compile group: 'com.taboola', name: 'api-java-client-core', version: 'x.y.z'
 ```
 
-Replace 'x.y.z' with the latest available version from [Maven Central](https://mvnrepository.com/artifact/com.taboola/rest-api-sdk-core)
+Replace 'x.y.z' with the latest available version from [Maven Central](https://mvnrepository.com/artifact/com.taboola/api-java-client-core)

@@ -10,7 +10,7 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>API Java client core</description>
-    <url>https://github.com/taboola/rest-api-sdk-core</url>
+    <url>https://github.com/taboola/api-java-client-core</url>
 
     <licenses>
         <license>
