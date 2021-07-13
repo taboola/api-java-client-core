@@ -17,7 +17,7 @@ Easily create Rest API clients by defining endpoint mappings and models that is 
 First you will need _RestAPIClient.java_ object
 ```
 RestAPIClient restClient = RestAPIClient.builder()
-                                        .setBaseUrl('your_base_url')
+                                        .setBaseUrl("your_base_url")
                                         .build();
 ```
 
@@ -29,9 +29,9 @@ public class EntityModelExample {
   private String name;
 
   public String getId() { return id; }
-  public String setId(String id) { this.id = id; }
+  public void setId(String id) { this.id = id; }
   public String getName() { return name; }
-  public String setName(String name) { this.name = name; }
+  public void setName(String name) { this.name = name; }
 }
 
 public interface EntityModelEndpoint {

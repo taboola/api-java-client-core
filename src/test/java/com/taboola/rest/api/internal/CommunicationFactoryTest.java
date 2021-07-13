@@ -1,9 +1,5 @@
 package com.taboola.rest.api.internal;
 
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
-
 import java.util.Collections;
 
 import org.junit.Assert;
@@ -15,6 +11,10 @@ import com.taboola.rest.api.exceptions.RestAPIException;
 import com.taboola.rest.api.exceptions.factories.DefaultExceptionFactory;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.config.UserAgentHeader;
+
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 
 /**
  * Created by vladi
@@ -36,7 +36,8 @@ public class CommunicationFactoryTest {
     public void beforeTest() {
         CommunicationConfig communicationConfig = new CommunicationConfig("http://localhost",
                 1L, 1L, 1L, 1, 60L,
-                Collections.singleton(new UserAgentHeader("Dummy-Agent")),true, new DefaultExceptionFactory(), new ObjectMapper());
+                Collections.singleton(new UserAgentHeader("Dummy-Agent")),true, new DefaultExceptionFactory(),
+                new ObjectMapper(), new ResponseFactories();
         testInstance = new CommunicationFactory(communicationConfig);
     }
 

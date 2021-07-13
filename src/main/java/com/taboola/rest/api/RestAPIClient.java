@@ -3,7 +3,9 @@ package com.taboola.rest.api;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.factories.DefaultExceptionFactory;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.CommunicationFactory;
+import com.taboola.rest.api.internal.ResponseFactories;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.config.SerializationConfig;
 import com.taboola.rest.api.internal.config.UserAgentHeader;
@@ -69,6 +72,7 @@ public class RestAPIClient {
         private String restAPIVersion;
         private ExceptionFactory exceptionFactory;
         private ObjectMapper objectMapper;
+        private final ResponseFactories responseFactories = new ResponseFactories();
 
         public RestAPIClientBuilder setBaseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -120,7 +124,7 @@ public class RestAPIClient {
             return this;
         }
 
-        public RestAPIClientBuilder setHeaders(Collection<RequestHeader> headers){
+        public RestAPIClientBuilder setHeaders(Collection<RequestHeader> headers) {
             this.headers = headers;
             return this;
         }
@@ -140,12 +144,17 @@ public class RestAPIClient {
             return this;
         }
 
+        public RestAPIClientBuilder addResponseFactory(Class<?> clazz, BiFunction<Map<String, List<String>>, String, Object> responseFactory) {
+            responseFactories.addResponseFactory(clazz, responseFactory);
+            return this;
+        }
+
         public RestAPIClient build() {
             organizeState();
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                                                                keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper);
+                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, responseFactories);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 
@@ -189,11 +198,11 @@ public class RestAPIClient {
                 userAgentSuffix = DEFAULT_USER_AGENT_SUFFIX;
             }
 
-            if(userAgentPrefix == null) {
+            if (userAgentPrefix == null) {
                 userAgentPrefix = DEFAULT_USER_AGENT_PREFIX;
             }
 
-            if(restAPIVersion == null) {
+            if (restAPIVersion == null) {
                 restAPIVersion = DEFAULT_REST_API_VERSION;
             }
 
@@ -205,11 +214,11 @@ public class RestAPIClient {
                 serializationConfig = DEFAULT_SERIALIZATION_CONFIG;
             }
 
-            if(exceptionFactory == null) {
+            if (exceptionFactory == null) {
                 exceptionFactory = DEFAULT_EXCEPTION_FACTORY;
             }
 
-            if(objectMapper == null) {
+            if (objectMapper == null) {
                 objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
             }
         }
