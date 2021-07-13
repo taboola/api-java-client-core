@@ -37,7 +37,7 @@ public class CommunicationFactoryTest {
         CommunicationConfig communicationConfig = new CommunicationConfig("http://localhost",
                 1L, 1L, 1L, 1, 60L,
                 Collections.singleton(new UserAgentHeader("Dummy-Agent")),true, new DefaultExceptionFactory(),
-                new ObjectMapper(), new ResponseFactories();
+                new ObjectMapper(), new ResponseFactories());
         testInstance = new CommunicationFactory(communicationConfig);
     }
 
