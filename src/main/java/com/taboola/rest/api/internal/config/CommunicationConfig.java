@@ -31,7 +31,7 @@ public class CommunicationConfig {
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
                                Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
-                               ObjectMapper objectMapper, ResponseFactories responseFactory) {
+                               ObjectMapper objectMapper, ResponseFactories responseFactories) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -42,7 +42,7 @@ public class CommunicationConfig {
         this.debug = debug;
         this.exceptionFactory = exceptionFactory;
         this.objectMapper = objectMapper;
-        this.responseFactories = responseFactory;
+        this.responseFactories = responseFactories;
     }
 
     public String getBaseUrl() {
