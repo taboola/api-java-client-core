@@ -1,11 +1,11 @@
 package com.taboola.rest.api.internal;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 
 /**
  * Created by vladi
@@ -15,15 +15,19 @@ import java.lang.reflect.Type;
  */
 public class StringConverterFactory extends Converter.Factory {
 
-    public static StringConverterFactory create() {
-        return new StringConverterFactory();
+    private final StringResponseFactories stringResponseFactories;
+
+    public static StringConverterFactory create(StringResponseFactories stringResponseFactories) {
+        return new StringConverterFactory(stringResponseFactories);
     }
 
-    private StringConverterFactory() { }
+    private StringConverterFactory(StringResponseFactories stringResponseFactories) {
+        this.stringResponseFactories = stringResponseFactories;
+    }
 
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-        if (String.class.equals(type)) {
+        if (String.class.equals(type) || stringResponseFactories.isExist(type)) {
             return ResponseBody::string;
         }
         return null;

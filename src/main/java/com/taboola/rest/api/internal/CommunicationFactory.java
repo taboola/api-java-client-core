@@ -30,7 +30,7 @@ public final class CommunicationFactory {
 
     private HttpLoggingInterceptor createLoggingInterceptor(CommunicationConfig config) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new CommunicationInterceptor());
-        if(config.isDebug()) {
+        if (config.isDebug()) {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             loggingInterceptor.redactHeader("Authorization");
             loggingInterceptor.redactHeader("Cookie");
@@ -43,21 +43,21 @@ public final class CommunicationFactory {
 
     private Retrofit.Builder createRetrofitBuilder(CommunicationConfig config) {
         return new Retrofit.Builder()
-                            .addConverterFactory(StringConverterFactory.create())
-                            .addConverterFactory(JacksonConverterFactory.create(config.getObjectMapper()))
-                            .addCallAdapterFactory(SynchronousCallAdapterFactory.create(config.getExceptionFactory()))
-                            .client(createOkHttpClient(config));
+                .addConverterFactory(StringConverterFactory.create(config.getStringResponseFactories()))
+                .addConverterFactory(JacksonConverterFactory.create(config.getObjectMapper()))
+                .addCallAdapterFactory(SynchronousCallAdapterFactory.create(config.getExceptionFactory(), config.getStringResponseFactories()))
+                .client(createOkHttpClient(config));
     }
 
     private OkHttpClient createOkHttpClient(CommunicationConfig config) {
         return new OkHttpClient.Builder()
-                    .addInterceptor(new HeadersInterceptor(config.getHeaders()))
-                    .addInterceptor(createLoggingInterceptor(config))
-                    .readTimeout(config.getReadTimeoutMillis(), TimeUnit.MILLISECONDS)
-                    .writeTimeout(config.getWriteTimeoutMillis(), TimeUnit.MILLISECONDS)
-                    .connectTimeout(config.getConnectionTimeoutMillis(), TimeUnit.MILLISECONDS)
-                    .connectionPool(new ConnectionPool(config.getMaxIdleConnections(),
-                            config.getKeepAliveDurationMillis(), TimeUnit.MILLISECONDS))
+                .addInterceptor(new HeadersInterceptor(config.getHeaders()))
+                .addInterceptor(createLoggingInterceptor(config))
+                .readTimeout(config.getReadTimeoutMillis(), TimeUnit.MILLISECONDS)
+                .writeTimeout(config.getWriteTimeoutMillis(), TimeUnit.MILLISECONDS)
+                .connectTimeout(config.getConnectionTimeoutMillis(), TimeUnit.MILLISECONDS)
+                .connectionPool(new ConnectionPool(config.getMaxIdleConnections(),
+                        config.getKeepAliveDurationMillis(), TimeUnit.MILLISECONDS))
                 .build();
     }
 

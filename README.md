@@ -1,7 +1,7 @@
 ## Rest API SDK Core
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.taboola/api-java-client-core/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.taboola/api-java-client-core)
-[![Build Status](https://travis-ci.org/taboola/api-java-client-core.svg?branch=master)](https://travis-ci.org/taboola/api-java-client-core)
+[![Build Status](https://travis-ci.com/taboola/api-java-client-core.svg?branch=master)](https://travis-ci.com/taboola/api-java-client-core)
 
 ### Table of Contents
 1. [Getting Started](#1-getting-started)
@@ -17,7 +17,7 @@ Easily create Rest API clients by defining endpoint mappings and models that is 
 First you will need _RestAPIClient.java_ object
 ```
 RestAPIClient restClient = RestAPIClient.builder()
-                                        .setBaseUrl('your_base_url')
+                                        .setBaseUrl("your_base_url")
                                         .build();
 ```
 
@@ -29,9 +29,9 @@ public class EntityModelExample {
   private String name;
 
   public String getId() { return id; }
-  public String setId(String id) { this.id = id; }
+  public void setId(String id) { this.id = id; }
   public String getName() { return name; }
-  public String setName(String name) { this.name = name; }
+  public void setName(String name) { this.name = name; }
 }
 
 public interface EntityModelEndpoint {

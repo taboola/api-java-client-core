@@ -23,7 +23,7 @@ public class SynchronousCallAdapterFactoryTest {
 
     @Before
     public void beforeTest() {
-        testInstance = SynchronousCallAdapterFactory.create(new DefaultExceptionFactory());
+        testInstance = SynchronousCallAdapterFactory.create(new DefaultExceptionFactory(), new StringResponseFactories());
     }
 
     @Test
