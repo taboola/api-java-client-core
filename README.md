@@ -1,7 +1,7 @@
 ## Rest API SDK Core
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.taboola/api-java-client-core/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.taboola/api-java-client-core)
-[![Build Status](https://travis-ci.org/taboola/api-java-client-core.svg?branch=master)](https://travis-ci.org/taboola/api-java-client-core)
+[![Build Status](https://travis-ci.com/taboola/api-java-client-core.svg?branch=master)](https://travis-ci.com/taboola/api-java-client-core)
 
 ### Table of Contents
 1. [Getting Started](#1-getting-started)
