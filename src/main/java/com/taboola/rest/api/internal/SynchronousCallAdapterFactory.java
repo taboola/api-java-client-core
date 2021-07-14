@@ -29,7 +29,7 @@ public class SynchronousCallAdapterFactory extends CallAdapter.Factory {
     private static final int BAD_REQUEST_HTTP_STATUS_CODE = 400;
     private static final int INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE = 500;
     private final ExceptionFactory exceptionFactory;
-    private final StringResponseFactories stringResponseHandler;
+    private final StringResponseFactories stringResponseFactories;
 
     public static SynchronousCallAdapterFactory create(ExceptionFactory exceptionFactory,
                                                        StringResponseFactories stringResponseFactories) {
@@ -39,7 +39,7 @@ public class SynchronousCallAdapterFactory extends CallAdapter.Factory {
     private SynchronousCallAdapterFactory(ExceptionFactory exceptionFactory,
                                           StringResponseFactories stringResponseFactories) {
         this.exceptionFactory = exceptionFactory;
-        this.stringResponseHandler = stringResponseFactories;
+        this.stringResponseFactories = stringResponseFactories;
     }
 
     @Override
@@ -62,8 +62,8 @@ public class SynchronousCallAdapterFactory extends CallAdapter.Factory {
                 try {
                     Response<Object> response = call.execute();
                     if (response.isSuccessful()) {
-                        if (stringResponseHandler.isExist(returnType)) {
-                            obj = stringResponseHandler.getFactory(returnType).handlerResponse(response.headers().toMultimap(), (String) response.body());
+                        if (stringResponseFactories.isExist(returnType)) {
+                            obj = stringResponseFactories.getFactory(returnType).handlerResponse(response.headers().toMultimap(), (String) response.body());
                         } else {
                             obj = response.body();
                         }
