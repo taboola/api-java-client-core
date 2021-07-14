@@ -15,19 +15,19 @@ import retrofit2.Retrofit;
  */
 public class StringConverterFactory extends Converter.Factory {
 
-    private final ResponseFactories responseFactories;
+    private final StringResponseFactories stringResponseFactories;
 
-    public static StringConverterFactory create(ResponseFactories responseFactories) {
-        return new StringConverterFactory(responseFactories);
+    public static StringConverterFactory create(StringResponseFactories stringResponseFactories) {
+        return new StringConverterFactory(stringResponseFactories);
     }
 
-    private StringConverterFactory(ResponseFactories responseFactories) {
-        this.responseFactories = responseFactories;
+    private StringConverterFactory(StringResponseFactories stringResponseFactories) {
+        this.stringResponseFactories = stringResponseFactories;
     }
 
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-        if (String.class.equals(type) || responseFactories.isExist(type)) {
+        if (String.class.equals(type) || stringResponseFactories.isExist(type)) {
             return ResponseBody::string;
         }
         return null;

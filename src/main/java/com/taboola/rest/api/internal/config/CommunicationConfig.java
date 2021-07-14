@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
-import com.taboola.rest.api.internal.ResponseFactories;
+import com.taboola.rest.api.internal.StringResponseFactories;
 import com.taboola.rest.api.model.RequestHeader;
 
 /**
@@ -26,12 +26,12 @@ public class CommunicationConfig {
     private final Collection<RequestHeader> headers;
     private final ExceptionFactory exceptionFactory;
     private final ObjectMapper objectMapper;
-    private final ResponseFactories responseFactories;
+    private final StringResponseFactories stringResponseFactories;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
                                Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
-                               ObjectMapper objectMapper, ResponseFactories responseFactories) {
+                               ObjectMapper objectMapper, StringResponseFactories stringResponseFactories) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -42,7 +42,7 @@ public class CommunicationConfig {
         this.debug = debug;
         this.exceptionFactory = exceptionFactory;
         this.objectMapper = objectMapper;
-        this.responseFactories = responseFactories;
+        this.stringResponseFactories = stringResponseFactories;
     }
 
     public String getBaseUrl() {
@@ -85,8 +85,8 @@ public class CommunicationConfig {
         return objectMapper;
     }
 
-    public ResponseFactories getResponseFactories() {
-        return responseFactories;
+    public StringResponseFactories getStringResponseFactories() {
+        return stringResponseFactories;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class CommunicationConfig {
                 ", headers=" + headers +
                 ", exceptionFactory=" + exceptionFactory +
                 ", objectMapper=" + objectMapper +
-                ", responseFactories=" + responseFactories +
+                ", stringResponseFactories=" + stringResponseFactories +
                 '}';
     }
 }

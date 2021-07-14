@@ -29,17 +29,17 @@ public class SynchronousCallAdapterFactory extends CallAdapter.Factory {
     private static final int BAD_REQUEST_HTTP_STATUS_CODE = 400;
     private static final int INTERNAL_SERVER_ERROR_HTTP_STATUS_CODE = 500;
     private final ExceptionFactory exceptionFactory;
-    private final ResponseFactories responseFactories;
+    private final StringResponseFactories stringResponseHandler;
 
     public static SynchronousCallAdapterFactory create(ExceptionFactory exceptionFactory,
-                                                       ResponseFactories responseFactories) {
-        return new SynchronousCallAdapterFactory(exceptionFactory, responseFactories);
+                                                       StringResponseFactories stringResponseFactories) {
+        return new SynchronousCallAdapterFactory(exceptionFactory, stringResponseFactories);
     }
 
     private SynchronousCallAdapterFactory(ExceptionFactory exceptionFactory,
-                                          ResponseFactories responseFactories) {
+                                          StringResponseFactories stringResponseFactories) {
         this.exceptionFactory = exceptionFactory;
-        this.responseFactories = responseFactories;
+        this.stringResponseHandler = stringResponseFactories;
     }
 
     @Override
@@ -62,8 +62,8 @@ public class SynchronousCallAdapterFactory extends CallAdapter.Factory {
                 try {
                     Response<Object> response = call.execute();
                     if (response.isSuccessful()) {
-                        if (responseFactories.isExist(returnType)) {
-                            obj = responseFactories.getResponseFactory(returnType).apply(response.headers().toMultimap(), (String) response.body());
+                        if (stringResponseHandler.isExist(returnType)) {
+                            obj = stringResponseHandler.getFactory(returnType).handlerResponse(response.headers().toMultimap(), (String) response.body());
                         } else {
                             obj = response.body();
                         }

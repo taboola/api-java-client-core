@@ -43,9 +43,9 @@ public final class CommunicationFactory {
 
     private Retrofit.Builder createRetrofitBuilder(CommunicationConfig config) {
         return new Retrofit.Builder()
-                .addConverterFactory(StringConverterFactory.create(config.getResponseFactories()))
+                .addConverterFactory(StringConverterFactory.create(config.getStringResponseFactories()))
                 .addConverterFactory(JacksonConverterFactory.create(config.getObjectMapper()))
-                .addCallAdapterFactory(SynchronousCallAdapterFactory.create(config.getExceptionFactory(), config.getResponseFactories()))
+                .addCallAdapterFactory(SynchronousCallAdapterFactory.create(config.getExceptionFactory(), config.getStringResponseFactories()))
                 .client(createOkHttpClient(config));
     }
 

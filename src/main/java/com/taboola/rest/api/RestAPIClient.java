@@ -3,9 +3,7 @@ package com.taboola.rest.api;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,12 +13,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.factories.DefaultExceptionFactory;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.CommunicationFactory;
-import com.taboola.rest.api.internal.ResponseFactories;
+import com.taboola.rest.api.internal.StringResponseFactories;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.config.SerializationConfig;
 import com.taboola.rest.api.internal.config.UserAgentHeader;
 import com.taboola.rest.api.internal.serialization.SerializationMapperCreator;
 import com.taboola.rest.api.model.RequestHeader;
+import com.taboola.rest.api.model.StringResponseFactory;
 
 /**
  * Created by vladi.m
@@ -72,7 +71,7 @@ public class RestAPIClient {
         private String restAPIVersion;
         private ExceptionFactory exceptionFactory;
         private ObjectMapper objectMapper;
-        private final ResponseFactories responseFactories = new ResponseFactories();
+        private final StringResponseFactories stringResponseFactories = new StringResponseFactories();
 
         public RestAPIClientBuilder setBaseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -144,8 +143,8 @@ public class RestAPIClient {
             return this;
         }
 
-        public RestAPIClientBuilder addResponseFactory(Class<?> clazz, BiFunction<Map<String, List<String>>, String, Object> responseFactory) {
-            responseFactories.addResponseFactory(clazz, responseFactory);
+        public RestAPIClientBuilder addStringBodyResponseFactory(Class<?> clazz, StringResponseFactory stringResponseFactory) {
+            stringResponseFactories.addFactory(clazz, stringResponseFactory);
             return this;
         }
 
@@ -154,7 +153,7 @@ public class RestAPIClient {
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, responseFactories);
+                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 

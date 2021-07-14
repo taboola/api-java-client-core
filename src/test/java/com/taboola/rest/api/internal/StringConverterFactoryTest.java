@@ -15,7 +15,7 @@ public class StringConverterFactoryTest {
 
     @Test
     public void testResponseBodyConverter() {
-        StringConverterFactory testInstance = StringConverterFactory.create(new ResponseFactories());
+        StringConverterFactory testInstance = StringConverterFactory.create(new StringResponseFactories());
 
         Converter<ResponseBody, ?> responseConverter = testInstance.responseBodyConverter(String.class, null, null);
         Assert.assertNotNull("Invalid converter, expecting converter", responseConverter);
