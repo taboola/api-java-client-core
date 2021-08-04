@@ -6,10 +6,12 @@ import java.util.Map;
 public class SerializationConfig {
     private Map<Class<?>, Class<?>> mixins;
     private boolean shouldIgnoreAnySetterAnnotation;
+    private boolean shouldDisableReadUnknownEnumValuesAsDefaultValue;
 
     public SerializationConfig() {
         mixins = new HashMap<>();
         shouldIgnoreAnySetterAnnotation = false;
+        shouldDisableReadUnknownEnumValuesAsDefaultValue = false;
     }
 
     public SerializationConfig setMixins(Map<Class<?>, Class<?>> mixins) {
@@ -22,12 +24,20 @@ public class SerializationConfig {
         return this;
     }
 
+    public SerializationConfig setShouldDisableReadUnknownEnumValuesAsDefaultValue() {
+        this.shouldDisableReadUnknownEnumValuesAsDefaultValue = true;
+        return this;
+    }
+
     public Map<Class<?>, Class<?>> getMixins() {
         return mixins;
     }
 
     public boolean shouldIgnoreAnySetterAnnotation() {
         return shouldIgnoreAnySetterAnnotation;
+    }
+    public boolean shouldDisableReadUnknownEnumValuesAsDefaultValue() {
+        return shouldDisableReadUnknownEnumValuesAsDefaultValue;
     }
 
     @Override

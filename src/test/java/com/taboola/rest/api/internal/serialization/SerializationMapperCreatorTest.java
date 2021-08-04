@@ -1,10 +1,12 @@
 package com.taboola.rest.api.internal.serialization;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.taboola.rest.api.internal.config.SerializationConfig;
 
 import org.junit.Assert;
@@ -68,9 +70,72 @@ public class SerializationMapperCreatorTest {
         Assert.assertNull("Name is parsed incorrectly", sampleApi.name);
     }
 
+    @Test
+    public void createObjectMapper_defaultSerializationConfigAndApiObjectHasValidEnum_enumParsedCorrectly() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letter\": \"B\" }", SampleApi.class);
+
+        Assert.assertEquals("Unknown enum is parsed incorrectly", SampleEnum.B, sampleApi.letter);
+    }
+
+    @Test
+    public void createObjectMapper_defaultSerializationConfigAndApiObjectHasInvalidEnum_defaultValueUsedOnSerialization() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letter\": \"D\" }", SampleApi.class);
+
+        Assert.assertEquals("Unknown enum is parsed incorrectly", SampleEnum.UNKNOWN, sampleApi.letter);
+    }
+
+    @Test
+    public void createObjectMapper_defaultSerializationConfigAndApiObjectHasEmptyEnumValue_defaultValueUsedOnSerialization() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letter\": \"D\" }", SampleApi.class);
+
+        Assert.assertEquals("Unknown enum is parsed incorrectly", SampleEnum.UNKNOWN, sampleApi.letter);
+    }
+
+    @Test
+    public void createObjectMapper_serializationConfigWithReadUnknownEnumsDisabledAndApiObjectHasValidEnum_enumParsedCorrectly() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig().setShouldDisableReadUnknownEnumValuesAsDefaultValue();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letter\": \"B\" }", SampleApi.class);
+
+        Assert.assertEquals("Unknown enum is parsed incorrectly", SampleEnum.B, sampleApi.letter);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void createObjectMapper_serializationConfigWithReadUnknownEnumsDisabledAndApiObjectHasInvalidEnum_InvalidFormatExceptionIsThrown() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig().setShouldDisableReadUnknownEnumValuesAsDefaultValue();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        objectMapper.readValue("{ \"letter\": \"D\" }", SampleApi.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void createObjectMapper_serializationConfigWithReadUnknownEnumsDisabledAndApiObjectHasEmptyEnumValue_InvalidFormatExceptionIsThrown() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig().setShouldDisableReadUnknownEnumValuesAsDefaultValue();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        objectMapper.readValue("{ \"letter\": \"\" }", SampleApi.class);
+    }
+
+    private enum SampleEnum {
+        A, B, @JsonEnumDefaultValue UNKNOWN
+    }
+
     private static class SampleApi {
         @JsonProperty("id")
         int id;
+
+        @JsonProperty("letter")
+        SampleEnum letter;
 
         @JsonProperty("name")
         String name;
@@ -79,6 +144,8 @@ public class SerializationMapperCreatorTest {
         public void handlerUnknownSetter(String field, Object value) throws Exception {
             throw new Exception("unknown field");
         }
+
+
     }
 
     private abstract class SampleMixIn {
