@@ -35,7 +35,7 @@ public final class CommunicationFactory {
             loggingInterceptor.redactHeader("Authorization");
             loggingInterceptor.redactHeader("Cookie");
         } else {
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            loggingInterceptor.setLevel(config.getLoggingLevel());
         }
 
         return loggingInterceptor;

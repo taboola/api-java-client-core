@@ -1,6 +1,8 @@
 package com.taboola.rest.api.internal.config;
 
 
+import okhttp3.logging.HttpLoggingInterceptor;
+
 import java.util.Collection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,11 +29,12 @@ public class CommunicationConfig {
     private final ExceptionFactory exceptionFactory;
     private final ObjectMapper objectMapper;
     private final StringResponseFactories stringResponseFactories;
+    private final HttpLoggingInterceptor.Level loggingLevel;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
                                Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
-                               ObjectMapper objectMapper, StringResponseFactories stringResponseFactories) {
+                               ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingInterceptor.Level loggingLevel) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -43,6 +46,7 @@ public class CommunicationConfig {
         this.exceptionFactory = exceptionFactory;
         this.objectMapper = objectMapper;
         this.stringResponseFactories = stringResponseFactories;
+        this.loggingLevel = loggingLevel;
     }
 
     public String getBaseUrl() {
@@ -89,6 +93,10 @@ public class CommunicationConfig {
         return stringResponseFactories;
     }
 
+    public HttpLoggingInterceptor.Level getLoggingLevel() {
+        return loggingLevel;
+    }
+
     @Override
     public String toString() {
         return "CommunicationConfig{" +
@@ -103,6 +111,7 @@ public class CommunicationConfig {
                 ", exceptionFactory=" + exceptionFactory +
                 ", objectMapper=" + objectMapper +
                 ", stringResponseFactories=" + stringResponseFactories +
+                ", loggingLevel=" + loggingLevel +
                 '}';
     }
 }

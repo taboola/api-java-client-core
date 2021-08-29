@@ -1,5 +1,7 @@
 package com.taboola.rest.api;
 
+import okhttp3.logging.HttpLoggingInterceptor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -72,6 +74,12 @@ public class RestAPIClient {
         private ExceptionFactory exceptionFactory;
         private ObjectMapper objectMapper;
         private final StringResponseFactories stringResponseFactories = new StringResponseFactories();
+        private HttpLoggingInterceptor.Level loggingLevel;
+
+        public RestAPIClientBuilder setLoggingLevel(HttpLoggingLevel loggingLevel) {
+            this.loggingLevel = HttpLoggingLevel.getHttpLoggingInterceptorLevel(loggingLevel);
+            return this;
+        }
 
         public RestAPIClientBuilder setBaseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -153,7 +161,7 @@ public class RestAPIClient {
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories);
+                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 
@@ -219,6 +227,10 @@ public class RestAPIClient {
 
             if (objectMapper == null) {
                 objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+            }
+
+            if (loggingLevel == null) {
+                loggingLevel = HttpLoggingInterceptor.Level.BASIC;
             }
         }
     }
