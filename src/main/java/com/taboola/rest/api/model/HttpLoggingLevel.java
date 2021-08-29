@@ -1,4 +1,4 @@
-package com.taboola.rest.api;
+package com.taboola.rest.api.model;
 
 import okhttp3.logging.HttpLoggingInterceptor;
 

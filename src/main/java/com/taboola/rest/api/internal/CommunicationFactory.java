@@ -32,12 +32,13 @@ public final class CommunicationFactory {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new CommunicationInterceptor());
         if (config.isDebug()) {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            loggingInterceptor.redactHeader("Authorization");
-            loggingInterceptor.redactHeader("Cookie");
         } else {
             loggingInterceptor.setLevel(config.getLoggingLevel());
         }
-
+        if (loggingInterceptor.getLevel() == HttpLoggingInterceptor.Level.BODY) {
+            loggingInterceptor.redactHeader("Authorization");
+            loggingInterceptor.redactHeader("Cookie");
+        }
         return loggingInterceptor;
     }
 

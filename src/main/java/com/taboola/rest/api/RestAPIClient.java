@@ -20,6 +20,7 @@ import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.config.SerializationConfig;
 import com.taboola.rest.api.internal.config.UserAgentHeader;
 import com.taboola.rest.api.internal.serialization.SerializationMapperCreator;
+import com.taboola.rest.api.model.HttpLoggingLevel;
 import com.taboola.rest.api.model.RequestHeader;
 import com.taboola.rest.api.model.StringResponseFactory;
 
