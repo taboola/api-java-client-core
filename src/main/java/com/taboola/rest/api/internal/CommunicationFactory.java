@@ -5,12 +5,16 @@ import java.util.concurrent.TimeUnit;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.interceptors.CommunicationInterceptor;
 import com.taboola.rest.api.internal.interceptors.HeadersInterceptor;
+import com.taboola.rest.api.model.HttpLoggingLevel;
 
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by vladi
@@ -19,7 +23,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  * By Taboola
  */
 public final class CommunicationFactory {
-
+    private static final Logger logger = LogManager.getLogger(CommunicationFactory.class);
     private final Retrofit retrofit;
 
     public CommunicationFactory(CommunicationConfig communicationConfig) {
@@ -33,9 +37,9 @@ public final class CommunicationFactory {
         if (config.isDebug()) {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         } else {
-            loggingInterceptor.setLevel(config.getLoggingLevel());
+            loggingInterceptor.setLevel(getHttpLoggingInterceptorLevel(config.getLoggingLevel()));
         }
-        if (loggingInterceptor.getLevel() == HttpLoggingInterceptor.Level.BODY) {
+        if (loggingInterceptor.getLevel() == HttpLoggingInterceptor.Level.BODY || loggingInterceptor.getLevel() == HttpLoggingInterceptor.Level.HEADERS) {
             loggingInterceptor.redactHeader("Authorization");
             loggingInterceptor.redactHeader("Cookie");
         }
@@ -60,6 +64,23 @@ public final class CommunicationFactory {
                 .connectionPool(new ConnectionPool(config.getMaxIdleConnections(),
                         config.getKeepAliveDurationMillis(), TimeUnit.MILLISECONDS))
                 .build();
+    }
+
+
+    public static HttpLoggingInterceptor.Level getHttpLoggingInterceptorLevel(HttpLoggingLevel httpLoggingLevel) {
+        switch (httpLoggingLevel) {
+            case NONE:
+                return HttpLoggingInterceptor.Level.NONE;
+            case BASIC:
+                return HttpLoggingInterceptor.Level.BASIC;
+            case HEADERS:
+                return HttpLoggingInterceptor.Level.HEADERS;
+            case BODY:
+                return HttpLoggingInterceptor.Level.BODY;
+            default:
+                logger.error("Getting unknown HttpLoggingLevel [{}]", httpLoggingLevel.name());
+                return HttpLoggingInterceptor.Level.BASIC;
+        }
     }
 
     public <E> E createRetrofitEndpoint(Class<E> clazz) {

@@ -75,10 +75,10 @@ public class RestAPIClient {
         private ExceptionFactory exceptionFactory;
         private ObjectMapper objectMapper;
         private final StringResponseFactories stringResponseFactories = new StringResponseFactories();
-        private HttpLoggingInterceptor.Level loggingLevel;
+        private HttpLoggingLevel loggingLevel;
 
         public RestAPIClientBuilder setLoggingLevel(HttpLoggingLevel loggingLevel) {
-            this.loggingLevel = HttpLoggingLevel.getHttpLoggingInterceptorLevel(loggingLevel);
+            this.loggingLevel = loggingLevel;
             return this;
         }
 
@@ -231,7 +231,7 @@ public class RestAPIClient {
             }
 
             if (loggingLevel == null) {
-                loggingLevel = HttpLoggingInterceptor.Level.BASIC;
+                loggingLevel = HttpLoggingLevel.BASIC;
             }
         }
     }

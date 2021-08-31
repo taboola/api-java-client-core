@@ -1,13 +1,12 @@
 package com.taboola.rest.api.internal.config;
 
 
-import okhttp3.logging.HttpLoggingInterceptor;
-
 import java.util.Collection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.StringResponseFactories;
+import com.taboola.rest.api.model.HttpLoggingLevel;
 import com.taboola.rest.api.model.RequestHeader;
 
 /**
@@ -29,12 +28,12 @@ public class CommunicationConfig {
     private final ExceptionFactory exceptionFactory;
     private final ObjectMapper objectMapper;
     private final StringResponseFactories stringResponseFactories;
-    private final HttpLoggingInterceptor.Level loggingLevel;
+    private final HttpLoggingLevel loggingLevel;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
                                Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
-                               ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingInterceptor.Level loggingLevel) {
+                               ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -93,7 +92,7 @@ public class CommunicationConfig {
         return stringResponseFactories;
     }
 
-    public HttpLoggingInterceptor.Level getLoggingLevel() {
+    public HttpLoggingLevel getLoggingLevel() {
         return loggingLevel;
     }
 
