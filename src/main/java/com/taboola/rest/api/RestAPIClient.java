@@ -1,7 +1,5 @@
 package com.taboola.rest.api;
 
-import okhttp3.logging.HttpLoggingInterceptor;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
