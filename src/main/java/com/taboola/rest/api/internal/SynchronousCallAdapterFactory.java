@@ -85,10 +85,6 @@ public class SynchronousCallAdapterFactory extends CallAdapter.Factory {
                     throwIfNotNull(exceptionFactory.createConnectivityException(e));
                 }
 
-                if (obj == null) {
-                    throw new RestAPIConnectivityException();
-                }
-
                 return obj;
             }
         };
