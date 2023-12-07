@@ -37,6 +37,7 @@ public class CommunicationConfig {
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
                                Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
                                ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel) {
+        // This one here for backward compatibility
         this(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections, keepAliveDurationMillis,
                 headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, null);
     }
