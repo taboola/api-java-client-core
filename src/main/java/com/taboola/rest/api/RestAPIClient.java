@@ -1,11 +1,13 @@
 package com.taboola.rest.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import okhttp3.Interceptor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,6 +76,7 @@ public class RestAPIClient {
         private ObjectMapper objectMapper;
         private final StringResponseFactories stringResponseFactories = new StringResponseFactories();
         private HttpLoggingLevel loggingLevel;
+        private List<Interceptor> interceptors;
 
         public RestAPIClientBuilder setLoggingLevel(HttpLoggingLevel loggingLevel) {
             this.loggingLevel = loggingLevel;
@@ -155,12 +158,21 @@ public class RestAPIClient {
             return this;
         }
 
+        public RestAPIClientBuilder setInterceptors(Interceptor... interceptors) {
+            return setInterceptors(Arrays.asList(interceptors));
+        }
+
+        public RestAPIClientBuilder setInterceptors(List<Interceptor> interceptors) {
+            this.interceptors = interceptors;
+            return this;
+        }
+
         public RestAPIClient build() {
             organizeState();
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel);
+                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, interceptors);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 

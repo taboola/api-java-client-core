@@ -55,15 +55,20 @@ public final class CommunicationFactory {
     }
 
     private OkHttpClient createOkHttpClient(CommunicationConfig config) {
-        return new OkHttpClient.Builder()
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(new HeadersInterceptor(config.getHeaders()))
                 .addInterceptor(createLoggingInterceptor(config))
                 .readTimeout(config.getReadTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .writeTimeout(config.getWriteTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .connectTimeout(config.getConnectionTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .connectionPool(new ConnectionPool(config.getMaxIdleConnections(),
-                        config.getKeepAliveDurationMillis(), TimeUnit.MILLISECONDS))
-                .build();
+                        config.getKeepAliveDurationMillis(), TimeUnit.MILLISECONDS));
+
+        if (config.getInterceptors() != null) {
+            config.getInterceptors().forEach(builder::addInterceptor);
+        }
+
+        return builder.build();
     }
 
 
