@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.interceptors.CommunicationInterceptor;
 import com.taboola.rest.api.internal.interceptors.HeadersInterceptor;
+import com.taboola.rest.api.internal.interceptors.ImmutableRequestResponseInterceptor;
 import com.taboola.rest.api.model.HttpLoggingLevel;
 
 import okhttp3.ConnectionPool;
@@ -58,6 +59,7 @@ public final class CommunicationFactory {
         return new OkHttpClient.Builder()
                 .addInterceptor(new HeadersInterceptor(config.getHeaders()))
                 .addInterceptor(createLoggingInterceptor(config))
+                .addInterceptor(new ImmutableRequestResponseInterceptor(config.getCommunicationInterceptor()))
                 .readTimeout(config.getReadTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .writeTimeout(config.getWriteTimeoutMillis(), TimeUnit.MILLISECONDS)
                 .connectTimeout(config.getConnectionTimeoutMillis(), TimeUnit.MILLISECONDS)

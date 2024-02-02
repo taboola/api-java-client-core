@@ -12,8 +12,8 @@ import com.taboola.rest.api.exceptions.factories.DefaultExceptionFactory;
 import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.config.UserAgentHeader;
 import com.taboola.rest.api.model.HttpLoggingLevel;
+import com.taboola.rest.api.model.NoOpCommunicationInterceptor;
 
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -39,7 +39,7 @@ public class CommunicationFactoryTest {
         CommunicationConfig communicationConfig = new CommunicationConfig("http://localhost",
                 1L, 1L, 1L, 1, 60L,
                 Collections.singleton(new UserAgentHeader("Dummy-Agent")),true, new DefaultExceptionFactory(),
-                new ObjectMapper(), new StringResponseFactories(), HttpLoggingLevel.BASIC);
+                new ObjectMapper(), new StringResponseFactories(), HttpLoggingLevel.BASIC, new NoOpCommunicationInterceptor());
         testInstance = new CommunicationFactory(communicationConfig);
     }
 

@@ -18,7 +18,9 @@ import com.taboola.rest.api.internal.config.CommunicationConfig;
 import com.taboola.rest.api.internal.config.SerializationConfig;
 import com.taboola.rest.api.internal.config.UserAgentHeader;
 import com.taboola.rest.api.internal.serialization.SerializationMapperCreator;
+import com.taboola.rest.api.model.CommunicationInterceptor;
 import com.taboola.rest.api.model.HttpLoggingLevel;
+import com.taboola.rest.api.model.NoOpCommunicationInterceptor;
 import com.taboola.rest.api.model.RequestHeader;
 import com.taboola.rest.api.model.StringResponseFactory;
 
@@ -57,6 +59,7 @@ public class RestAPIClient {
         private static final String DEFAULT_USER_AGENT_SUFFIX = "UNDEFINED";
         private static final String DEFAULT_USER_AGENT_PREFIX = "UNDEFINED";
         private static final ExceptionFactory DEFAULT_EXCEPTION_FACTORY = new DefaultExceptionFactory();
+        private static final CommunicationInterceptor DEFAULT_COMMUNICATION_INTERCEPTOR = new NoOpCommunicationInterceptor();
 
         private String baseUrl;
         private Long writeTimeoutMillis;
@@ -74,6 +77,7 @@ public class RestAPIClient {
         private ObjectMapper objectMapper;
         private final StringResponseFactories stringResponseFactories = new StringResponseFactories();
         private HttpLoggingLevel loggingLevel;
+        private CommunicationInterceptor communicationInterceptor;
 
         public RestAPIClientBuilder setLoggingLevel(HttpLoggingLevel loggingLevel) {
             this.loggingLevel = loggingLevel;
@@ -150,6 +154,11 @@ public class RestAPIClient {
             return this;
         }
 
+        public RestAPIClientBuilder setCommunicationInterceptor(CommunicationInterceptor communicationInterceptor) {
+            this.communicationInterceptor = communicationInterceptor;
+            return this;
+        }
+
         public RestAPIClientBuilder addStringBodyResponseFactory(Class<?> clazz, StringResponseFactory stringResponseFactory) {
             stringResponseFactories.addFactory(clazz, stringResponseFactory);
             return this;
@@ -160,7 +169,7 @@ public class RestAPIClient {
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel);
+                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 
@@ -230,6 +239,10 @@ public class RestAPIClient {
 
             if (loggingLevel == null) {
                 loggingLevel = HttpLoggingLevel.BASIC;
+            }
+
+            if(communicationInterceptor == null) {
+                communicationInterceptor = DEFAULT_COMMUNICATION_INTERCEPTOR;
             }
         }
     }
