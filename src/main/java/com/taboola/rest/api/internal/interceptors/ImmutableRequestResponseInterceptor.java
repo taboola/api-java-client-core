@@ -6,6 +6,9 @@ import okhttp3.Response;
 import java.io.IOException;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.taboola.rest.api.model.CommunicationInterceptor;
 
 /**
@@ -16,6 +19,7 @@ import com.taboola.rest.api.model.CommunicationInterceptor;
  */
 public class ImmutableRequestResponseInterceptor implements Interceptor {
 
+    private static final Logger logger = LogManager.getLogger(ImmutableRequestResponseInterceptor.class);
     private final CommunicationInterceptor interceptor;
 
     public ImmutableRequestResponseInterceptor(CommunicationInterceptor interceptor) {
@@ -25,13 +29,22 @@ public class ImmutableRequestResponseInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        interceptor.before(chain.request());
+        try {
+            interceptor.before(chain.request());
+        } catch (Throwable t) {
+            logger.error("Failed to execute 'before' communication interceptor", t);
+        }
+
         Response response = null;
         try {
             response = chain.proceed(chain.request());
             return response;
         } finally {
-            interceptor.after(chain.request(), response);
+            try {
+                interceptor.after(chain.request(), response);
+            } catch (Throwable t) {
+                logger.error("Failed to execute 'after' communication interceptor", t);
+            }
         }
     }
 }
