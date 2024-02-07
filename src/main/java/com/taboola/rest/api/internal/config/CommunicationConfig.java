@@ -6,6 +6,7 @@ import java.util.Collection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.StringResponseFactories;
+import com.taboola.rest.api.model.CommunicationInterceptor;
 import com.taboola.rest.api.model.HttpLoggingLevel;
 import com.taboola.rest.api.model.RequestHeader;
 
@@ -29,11 +30,13 @@ public class CommunicationConfig {
     private final ObjectMapper objectMapper;
     private final StringResponseFactories stringResponseFactories;
     private final HttpLoggingLevel loggingLevel;
+    private final CommunicationInterceptor communicationInterceptor;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
                                Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
-                               ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel) {
+                               ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel,
+                               CommunicationInterceptor communicationInterceptor) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -46,6 +49,7 @@ public class CommunicationConfig {
         this.objectMapper = objectMapper;
         this.stringResponseFactories = stringResponseFactories;
         this.loggingLevel = loggingLevel;
+        this.communicationInterceptor = communicationInterceptor;
     }
 
     public String getBaseUrl() {
@@ -96,6 +100,10 @@ public class CommunicationConfig {
         return loggingLevel;
     }
 
+    public CommunicationInterceptor getCommunicationInterceptor() {
+        return communicationInterceptor;
+    }
+
     @Override
     public String toString() {
         return "CommunicationConfig{" +
@@ -111,6 +119,7 @@ public class CommunicationConfig {
                 ", objectMapper=" + objectMapper +
                 ", stringResponseFactories=" + stringResponseFactories +
                 ", loggingLevel=" + loggingLevel +
+                ", communicationInterceptor=" + communicationInterceptor +
                 '}';
     }
 }
