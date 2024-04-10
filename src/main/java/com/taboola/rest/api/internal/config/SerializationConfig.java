@@ -8,6 +8,7 @@ public class SerializationConfig {
     private boolean shouldIgnoreAnySetterAnnotation;
     private boolean shouldDisableReadUnknownEnumValuesAsDefaultValue;
     private boolean shouldUseSnakeCase;
+    private boolean shouldAllowNullAsDefaultValueForReadUnknownEnums;
 
     public SerializationConfig() {
         mixins = new HashMap<>();
@@ -36,6 +37,11 @@ public class SerializationConfig {
         return this;
     }
 
+    public SerializationConfig setShouldAllowNullAsDefaultValueForReadUnknownEnums() {
+        this.shouldAllowNullAsDefaultValueForReadUnknownEnums = true;
+        return this;
+    }
+
     public Map<Class<?>, Class<?>> getMixins() {
         return mixins;
     }
@@ -50,12 +56,19 @@ public class SerializationConfig {
         return shouldUseSnakeCase;
     }
 
+    public boolean shouldAllowNullAsDefaultValueForReadUnknownEnums() {
+        return shouldAllowNullAsDefaultValueForReadUnknownEnums;
+    }
+
+
     @Override
     public String toString() {
         return "SerializationConfig{" +
                 "mixins=" + mixins +
                 ", shouldIgnoreAnySetterAnnotation=" + shouldIgnoreAnySetterAnnotation +
+                ", shouldDisableReadUnknownEnumValuesAsDefaultValue=" + shouldDisableReadUnknownEnumValuesAsDefaultValue +
                 ", shouldUseSnakeCase=" + shouldUseSnakeCase +
+                ", shouldAllowNullAsDefaultValueForReadUnknownEnums=" + shouldAllowNullAsDefaultValueForReadUnknownEnums +
                 '}';
     }
 }
