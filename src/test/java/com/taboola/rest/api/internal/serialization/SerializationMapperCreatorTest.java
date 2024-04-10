@@ -91,13 +91,33 @@ public class SerializationMapperCreatorTest {
     }
 
     @Test
-    public void createObjectMapper_defaultSerializationConfigAndApiObjectHasEmptyEnumValue_defaultValueUsedOnSerialization() throws IOException {
-        SerializationConfig serializationConfig = new SerializationConfig();
+    public void createObjectMapper_serializationConfigAndAllowNullAsDefaultValueForReadUnknownEnumsAndApiObjectHasInvalidEnum_defaultValueUsedOnSerialization() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig().setShouldAllowNullAsDefaultValueForReadUnknownEnums();
         ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
 
         SampleApi sampleApi = objectMapper.readValue("{ \"letter\": \"D\" }", SampleApi.class);
 
+        Assert.assertEquals("Unknown enum is parsed incorrectly. Default takes precedence before null", SampleEnum.UNKNOWN, sampleApi.letter);
+    }
+
+    @Test
+    public void createObjectMapper_defaultSerializationConfigAndApiObjectHasEmptyEnumValue_defaultValueUsedOnSerialization() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letter\": \"\" }", SampleApi.class);
+
         Assert.assertEquals("Unknown enum is parsed incorrectly", SampleEnum.UNKNOWN, sampleApi.letter);
+    }
+
+    @Test
+    public void createObjectMapper_defaultSerializationConfigAndApiObjectHasNullEnumValue_nullOnSerialization() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letter\": null }", SampleApi.class);
+
+        Assert.assertNull("Unknown enum is parsed incorrectly", sampleApi.letter);
     }
 
     @Test
@@ -118,6 +138,16 @@ public class SerializationMapperCreatorTest {
         objectMapper.readValue("{ \"letter\": \"D\" }", SampleApi.class);
     }
 
+    @Test
+    public void createObjectMapper_serializationConfigWithReadUnknownEnumsDisabledAndAllowNullAsDefaultValueForReadUnknownEnumsAndApiObjectHasInvalidEnum_nullOnSerialization() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig().setShouldDisableReadUnknownEnumValuesAsDefaultValue().setShouldAllowNullAsDefaultValueForReadUnknownEnums();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letter\": \"D\" }", SampleApi.class);
+
+        Assert.assertNull("Unknown enum is parsed incorrectly", sampleApi.letter);
+    }
+
     @Test(expected = InvalidFormatException.class)
     public void createObjectMapper_serializationConfigWithReadUnknownEnumsDisabledAndApiObjectHasEmptyEnumValue_InvalidFormatExceptionIsThrown() throws IOException {
         SerializationConfig serializationConfig = new SerializationConfig().setShouldDisableReadUnknownEnumValuesAsDefaultValue();
@@ -126,8 +156,69 @@ public class SerializationMapperCreatorTest {
         objectMapper.readValue("{ \"letter\": \"\" }", SampleApi.class);
     }
 
+    @Test
+    public void createObjectMapper_serializationConfigWithReadUnknownEnumsDisabledAndAllowNullAsDefaultValueForReadUnknownEnumsAndApiObjectHasEmptyEnumValue_nullOnSerialization() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig().setShouldDisableReadUnknownEnumValuesAsDefaultValue().setShouldAllowNullAsDefaultValueForReadUnknownEnums();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letter\": \"\" }", SampleApi.class);
+
+        Assert.assertNull("Unknown enum is parsed incorrectly", sampleApi.letter);
+    }
+
+    @Test
+    public void createObjectMapper_defaultSerializationConfigAndNoDefaultEnumIsValid_enumParsedCorrectly() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letterNoDefault\": \"BB\" }", SampleApi.class);
+
+        Assert.assertEquals("shouldAllowNullAsDefaultValueForReadUnknownEnums should not affect deserializing valid enums",
+                SampleEnumNoDefault.BB, sampleApi.letterNoDefault);
+    }
+
+    @Test
+    public void createObjectMapper_defaultSerializationConfigAndNoDefaultEnumIsNull_enumIsNull() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letterNoDefault\": null }", SampleApi.class);
+
+        Assert.assertNull("shouldAllowNullAsDefaultValueForReadUnknownEnums should not affect deserializing null enums", sampleApi.letterNoDefault);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void createObjectMapper_defaultSerializationConfigAndNoDefaultEnumIsEmpty_InvalidFormatExceptionIsThrown() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        objectMapper.readValue("{ \"letterNoDefault\": \"\" }", SampleApi.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void createObjectMapper_defaultSerializationConfigAndNoDefaultEnumIsInvalid_InvalidFormatExceptionIsThrown() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        objectMapper.readValue("{ \"letterNoDefault\": \"BBB\" }", SampleApi.class);
+    }
+
+    @Test
+    public void createObjectMapper_serializationConfigAndAllowNullAsDefaultValueForReadUnknownEnumsAndNoDefaultEnumIsInvalid_enumIsNull() throws IOException {
+        SerializationConfig serializationConfig = new SerializationConfig().setShouldAllowNullAsDefaultValueForReadUnknownEnums();
+        ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(serializationConfig);
+
+        SampleApi sampleApi = objectMapper.readValue("{ \"letterNoDefault\": \"BBB\" }", SampleApi.class);
+
+        Assert.assertNull("Even though enum has no set default value and deserialization not configured to use default value, null should be default",
+                sampleApi.letterNoDefault);
+    }
+
     private enum SampleEnum {
         A, B, @JsonEnumDefaultValue UNKNOWN
+    }
+    private enum SampleEnumNoDefault {
+        AA, BB
     }
 
     private static class SampleApi {
@@ -136,6 +227,9 @@ public class SerializationMapperCreatorTest {
 
         @JsonProperty("letter")
         SampleEnum letter;
+
+        @JsonProperty("letterNoDefault")
+        SampleEnumNoDefault letterNoDefault;
 
         @JsonProperty("name")
         String name;

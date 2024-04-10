@@ -20,6 +20,10 @@ public class SerializationMapperCreator {
         if (!serializationConfig.shouldDisableReadUnknownEnumValuesAsDefaultValue()) {
             objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true);
         }
+        if (serializationConfig.shouldAllowNullAsDefaultValueForReadUnknownEnums()) {
+            // NOTE: default enum value takes precedence over null
+            objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+        }
 
         serializationConfig.getMixins().forEach(objectMapper::addMixIn);
 
