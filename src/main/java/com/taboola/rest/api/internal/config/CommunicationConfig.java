@@ -1,6 +1,8 @@
 package com.taboola.rest.api.internal.config;
 
 
+import okhttp3.Interceptor;
+
 import java.util.Collection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,12 +33,13 @@ public class CommunicationConfig {
     private final StringResponseFactories stringResponseFactories;
     private final HttpLoggingLevel loggingLevel;
     private final CommunicationInterceptor communicationInterceptor;
+    private final Collection<Interceptor> interceptors;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
                                Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
                                ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel,
-                               CommunicationInterceptor communicationInterceptor) {
+                               CommunicationInterceptor communicationInterceptor, Collection<Interceptor> interceptors) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -50,6 +53,7 @@ public class CommunicationConfig {
         this.stringResponseFactories = stringResponseFactories;
         this.loggingLevel = loggingLevel;
         this.communicationInterceptor = communicationInterceptor;
+        this.interceptors = interceptors;
     }
 
     public String getBaseUrl() {
@@ -104,6 +108,10 @@ public class CommunicationConfig {
         return communicationInterceptor;
     }
 
+    public Collection<Interceptor> getInterceptors() {
+        return interceptors;
+    }
+
     @Override
     public String toString() {
         return "CommunicationConfig{" +
@@ -120,6 +128,7 @@ public class CommunicationConfig {
                 ", stringResponseFactories=" + stringResponseFactories +
                 ", loggingLevel=" + loggingLevel +
                 ", communicationInterceptor=" + communicationInterceptor +
+                ", interceptors=" + interceptors +
                 '}';
     }
 }

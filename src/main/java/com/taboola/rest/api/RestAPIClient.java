@@ -1,5 +1,7 @@
 package com.taboola.rest.api;
 
+import okhttp3.Interceptor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +53,7 @@ public class RestAPIClient {
     }
 
     public static class RestAPIClientBuilder {
-        private static final String VERSION = "1.0.6";
+        private static final String VERSION = "1.0.7";
         private static final Integer DEFAULT_MAX_IDLE_CONNECTIONS = 5;
         private static final Long DEFAULT_KEEP_ALIVE_DURATION_MILLIS = 300_000L;
         private static final SerializationConfig DEFAULT_SERIALIZATION_CONFIG = new SerializationConfig();
@@ -78,6 +80,7 @@ public class RestAPIClient {
         private final StringResponseFactories stringResponseFactories = new StringResponseFactories();
         private HttpLoggingLevel loggingLevel;
         private CommunicationInterceptor communicationInterceptor;
+        private List<Interceptor> interceptors = new ArrayList<>();
 
         public RestAPIClientBuilder setLoggingLevel(HttpLoggingLevel loggingLevel) {
             this.loggingLevel = loggingLevel;
@@ -164,12 +167,17 @@ public class RestAPIClient {
             return this;
         }
 
+        public RestAPIClientBuilder addInterceptor(Interceptor interceptor) {
+            interceptors.add(interceptor);
+            return this;
+        }
+
         public RestAPIClient build() {
             organizeState();
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor);
+                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor, interceptors);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 
