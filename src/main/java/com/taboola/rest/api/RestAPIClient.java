@@ -1,7 +1,5 @@
 package com.taboola.rest.api;
 
-import okhttp3.Interceptor;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +22,7 @@ import com.taboola.rest.api.model.CommunicationInterceptor;
 import com.taboola.rest.api.model.HttpLoggingLevel;
 import com.taboola.rest.api.model.NoOpCommunicationInterceptor;
 import com.taboola.rest.api.model.RequestHeader;
+import com.taboola.rest.api.model.RequestHeaders;
 import com.taboola.rest.api.model.StringResponseFactory;
 
 /**
@@ -80,7 +79,7 @@ public class RestAPIClient {
         private final StringResponseFactories stringResponseFactories = new StringResponseFactories();
         private HttpLoggingLevel loggingLevel;
         private CommunicationInterceptor communicationInterceptor;
-        private List<Interceptor> interceptors = new ArrayList<>();
+        private RequestHeaders requestHeaders;
 
         public RestAPIClientBuilder setLoggingLevel(HttpLoggingLevel loggingLevel) {
             this.loggingLevel = loggingLevel;
@@ -167,8 +166,8 @@ public class RestAPIClient {
             return this;
         }
 
-        public RestAPIClientBuilder addInterceptor(Interceptor interceptor) {
-            interceptors.add(interceptor);
+        public RestAPIClientBuilder setRequestHeaders(RequestHeaders requestHeaders) {
+            this.requestHeaders = requestHeaders;
             return this;
         }
 
@@ -177,7 +176,7 @@ public class RestAPIClient {
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor, interceptors);
+                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor, requestHeaders);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 
@@ -249,7 +248,7 @@ public class RestAPIClient {
                 loggingLevel = HttpLoggingLevel.BASIC;
             }
 
-            if(communicationInterceptor == null) {
+            if (communicationInterceptor == null) {
                 communicationInterceptor = DEFAULT_COMMUNICATION_INTERCEPTOR;
             }
         }

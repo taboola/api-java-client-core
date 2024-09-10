@@ -1,8 +1,6 @@
 package com.taboola.rest.api.internal.config;
 
 
-import okhttp3.Interceptor;
-
 import java.util.Collection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +9,7 @@ import com.taboola.rest.api.internal.StringResponseFactories;
 import com.taboola.rest.api.model.CommunicationInterceptor;
 import com.taboola.rest.api.model.HttpLoggingLevel;
 import com.taboola.rest.api.model.RequestHeader;
+import com.taboola.rest.api.model.RequestHeaders;
 
 /**
  * Created by vladi
@@ -33,13 +32,13 @@ public class CommunicationConfig {
     private final StringResponseFactories stringResponseFactories;
     private final HttpLoggingLevel loggingLevel;
     private final CommunicationInterceptor communicationInterceptor;
-    private final Collection<Interceptor> interceptors;
+    private final RequestHeaders requestHeaders;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
                                Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
                                ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel,
-                               CommunicationInterceptor communicationInterceptor, Collection<Interceptor> interceptors) {
+                               CommunicationInterceptor communicationInterceptor, RequestHeaders requestHeaders) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
@@ -53,7 +52,7 @@ public class CommunicationConfig {
         this.stringResponseFactories = stringResponseFactories;
         this.loggingLevel = loggingLevel;
         this.communicationInterceptor = communicationInterceptor;
-        this.interceptors = interceptors;
+        this.requestHeaders = requestHeaders;
     }
 
     public String getBaseUrl() {
@@ -108,8 +107,8 @@ public class CommunicationConfig {
         return communicationInterceptor;
     }
 
-    public Collection<Interceptor> getInterceptors() {
-        return interceptors;
+    public RequestHeaders getRequestHeaders() {
+        return requestHeaders;
     }
 
     @Override
@@ -128,7 +127,7 @@ public class CommunicationConfig {
                 ", stringResponseFactories=" + stringResponseFactories +
                 ", loggingLevel=" + loggingLevel +
                 ", communicationInterceptor=" + communicationInterceptor +
-                ", interceptors=" + interceptors +
+                ", requestHeaders=" + requestHeaders +
                 '}';
     }
 }
