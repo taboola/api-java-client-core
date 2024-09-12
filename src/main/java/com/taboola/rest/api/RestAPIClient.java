@@ -20,9 +20,10 @@ import com.taboola.rest.api.internal.config.UserAgentHeader;
 import com.taboola.rest.api.internal.serialization.SerializationMapperCreator;
 import com.taboola.rest.api.model.CommunicationInterceptor;
 import com.taboola.rest.api.model.HttpLoggingLevel;
+import com.taboola.rest.api.model.MultiRequestHeadersSupplier;
 import com.taboola.rest.api.model.NoOpCommunicationInterceptor;
 import com.taboola.rest.api.model.RequestHeader;
-import com.taboola.rest.api.model.RequestHeaders;
+import com.taboola.rest.api.model.RequestHeadersSupplier;
 import com.taboola.rest.api.model.StringResponseFactory;
 
 /**
@@ -71,6 +72,7 @@ public class RestAPIClient {
         private Boolean debug;
         private SerializationConfig serializationConfig;
         private Collection<RequestHeader> headers;
+        private RequestHeadersSupplier headersSupplier;
         private String userAgentPrefix;
         private String userAgentSuffix;
         private String restAPIVersion;
@@ -79,7 +81,6 @@ public class RestAPIClient {
         private final StringResponseFactories stringResponseFactories = new StringResponseFactories();
         private HttpLoggingLevel loggingLevel;
         private CommunicationInterceptor communicationInterceptor;
-        private RequestHeaders requestHeaders;
 
         public RestAPIClientBuilder setLoggingLevel(HttpLoggingLevel loggingLevel) {
             this.loggingLevel = loggingLevel;
@@ -141,6 +142,11 @@ public class RestAPIClient {
             return this;
         }
 
+        public RestAPIClientBuilder setHeadersSupplier(RequestHeadersSupplier headersSupplier) {
+            this.headersSupplier = headersSupplier;
+            return this;
+        }
+
         public RestAPIClientBuilder setAPIVersion(String restAPIVersion) {
             this.restAPIVersion = restAPIVersion;
             return this;
@@ -166,17 +172,14 @@ public class RestAPIClient {
             return this;
         }
 
-        public RestAPIClientBuilder setRequestHeaders(RequestHeaders requestHeaders) {
-            this.requestHeaders = requestHeaders;
-            return this;
-        }
-
         public RestAPIClient build() {
             organizeState();
             String finalUserAgent = String.format("%s/%s/%s (%s)", userAgentPrefix, restAPIVersion, VERSION, userAgentSuffix);
             Collection<RequestHeader> headers = getAllHeaders(this.headers, finalUserAgent);
+            RequestHeadersSupplier multiRequestHeadersSupplier = new MultiRequestHeadersSupplier(() -> headers, headersSupplier);
+
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, headers, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor, requestHeaders);
+                    keepAliveDurationMillis, multiRequestHeadersSupplier, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 

@@ -8,8 +8,7 @@ import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.StringResponseFactories;
 import com.taboola.rest.api.model.CommunicationInterceptor;
 import com.taboola.rest.api.model.HttpLoggingLevel;
-import com.taboola.rest.api.model.RequestHeader;
-import com.taboola.rest.api.model.RequestHeaders;
+import com.taboola.rest.api.model.RequestHeadersSupplier;
 
 /**
  * Created by vladi
@@ -26,33 +25,31 @@ public class CommunicationConfig {
     private final int maxIdleConnections;
     private final long keepAliveDurationMillis;
     private final boolean debug;
-    private final Collection<RequestHeader> headers;
+    private final RequestHeadersSupplier requestHeadersSupplier;
     private final ExceptionFactory exceptionFactory;
     private final ObjectMapper objectMapper;
     private final StringResponseFactories stringResponseFactories;
     private final HttpLoggingLevel loggingLevel;
     private final CommunicationInterceptor communicationInterceptor;
-    private final RequestHeaders requestHeaders;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
-                               Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
+                               RequestHeadersSupplier requestHeadersSupplier, boolean debug, ExceptionFactory exceptionFactory,
                                ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel,
-                               CommunicationInterceptor communicationInterceptor, RequestHeaders requestHeaders) {
+                               CommunicationInterceptor communicationInterceptor) {
         this.baseUrl = baseUrl;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
         this.writeTimeoutMillis = writeTimeoutMillis;
         this.maxIdleConnections = maxIdleConnections;
         this.keepAliveDurationMillis = keepAliveDurationMillis;
-        this.headers = headers;
+        this.requestHeadersSupplier = requestHeadersSupplier;
         this.debug = debug;
         this.exceptionFactory = exceptionFactory;
         this.objectMapper = objectMapper;
         this.stringResponseFactories = stringResponseFactories;
         this.loggingLevel = loggingLevel;
         this.communicationInterceptor = communicationInterceptor;
-        this.requestHeaders = requestHeaders;
     }
 
     public String getBaseUrl() {
@@ -79,8 +76,8 @@ public class CommunicationConfig {
         return keepAliveDurationMillis;
     }
 
-    public Collection<RequestHeader> getHeaders() {
-        return headers;
+    public RequestHeadersSupplier getRequestHeadersSupplier() {
+        return requestHeadersSupplier;
     }
 
     public boolean isDebug() {
@@ -107,10 +104,6 @@ public class CommunicationConfig {
         return communicationInterceptor;
     }
 
-    public RequestHeaders getRequestHeaders() {
-        return requestHeaders;
-    }
-
     @Override
     public String toString() {
         return "CommunicationConfig{" +
@@ -121,13 +114,12 @@ public class CommunicationConfig {
                 ", maxIdleConnections=" + maxIdleConnections +
                 ", keepAliveDurationMillis=" + keepAliveDurationMillis +
                 ", debug=" + debug +
-                ", headers=" + headers +
+                ", requestHeadersSupplier=" + requestHeadersSupplier +
                 ", exceptionFactory=" + exceptionFactory +
                 ", objectMapper=" + objectMapper +
                 ", stringResponseFactories=" + stringResponseFactories +
                 ", loggingLevel=" + loggingLevel +
                 ", communicationInterceptor=" + communicationInterceptor +
-                ", requestHeaders=" + requestHeaders +
                 '}';
     }
 }
