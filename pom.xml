@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.taboola</groupId>
     <artifactId>api-java-client-core</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>API Java client core</description>

@@ -8,7 +8,7 @@ import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.StringResponseFactories;
 import com.taboola.rest.api.model.CommunicationInterceptor;
 import com.taboola.rest.api.model.HttpLoggingLevel;
-import com.taboola.rest.api.model.RequestHeader;
+import com.taboola.rest.api.model.RequestHeadersSupplier;
 
 /**
  * Created by vladi
@@ -25,7 +25,7 @@ public class CommunicationConfig {
     private final int maxIdleConnections;
     private final long keepAliveDurationMillis;
     private final boolean debug;
-    private final Collection<RequestHeader> headers;
+    private final RequestHeadersSupplier requestHeadersSupplier;
     private final ExceptionFactory exceptionFactory;
     private final ObjectMapper objectMapper;
     private final StringResponseFactories stringResponseFactories;
@@ -34,7 +34,7 @@ public class CommunicationConfig {
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
                                Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
-                               Collection<RequestHeader> headers, boolean debug, ExceptionFactory exceptionFactory,
+                               RequestHeadersSupplier requestHeadersSupplier, boolean debug, ExceptionFactory exceptionFactory,
                                ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel,
                                CommunicationInterceptor communicationInterceptor) {
         this.baseUrl = baseUrl;
@@ -43,7 +43,7 @@ public class CommunicationConfig {
         this.writeTimeoutMillis = writeTimeoutMillis;
         this.maxIdleConnections = maxIdleConnections;
         this.keepAliveDurationMillis = keepAliveDurationMillis;
-        this.headers = headers;
+        this.requestHeadersSupplier = requestHeadersSupplier;
         this.debug = debug;
         this.exceptionFactory = exceptionFactory;
         this.objectMapper = objectMapper;
@@ -76,8 +76,8 @@ public class CommunicationConfig {
         return keepAliveDurationMillis;
     }
 
-    public Collection<RequestHeader> getHeaders() {
-        return headers;
+    public RequestHeadersSupplier getRequestHeadersSupplier() {
+        return requestHeadersSupplier;
     }
 
     public boolean isDebug() {
@@ -114,7 +114,7 @@ public class CommunicationConfig {
                 ", maxIdleConnections=" + maxIdleConnections +
                 ", keepAliveDurationMillis=" + keepAliveDurationMillis +
                 ", debug=" + debug +
-                ", headers=" + headers +
+                ", requestHeadersSupplier=" + requestHeadersSupplier +
                 ", exceptionFactory=" + exceptionFactory +
                 ", objectMapper=" + objectMapper +
                 ", stringResponseFactories=" + stringResponseFactories +

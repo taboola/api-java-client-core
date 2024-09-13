@@ -57,7 +57,7 @@ public final class CommunicationFactory {
 
     private OkHttpClient createOkHttpClient(CommunicationConfig config) {
         return new OkHttpClient.Builder()
-                .addInterceptor(new HeadersInterceptor(config.getHeaders()))
+                .addInterceptor(new HeadersInterceptor(config.getRequestHeadersSupplier()))
                 .addInterceptor(createLoggingInterceptor(config))
                 .addInterceptor(new ImmutableRequestResponseInterceptor(config.getCommunicationInterceptor()))
                 .readTimeout(config.getReadTimeoutMillis(), TimeUnit.MILLISECONDS)
