@@ -27,7 +27,7 @@ public class SerializationMapperCreatorTest {
     public void createObjectMapper_defaultSerializationConfig_objectMapperWithDefaultValues() {
         ObjectMapper objectMapper = SerializationMapperCreator.createObjectMapper(new SerializationConfig());
 
-        Assert.assertEquals("Invalid property naming strategy", PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES, objectMapper.getPropertyNamingStrategy());
+        Assert.assertEquals("Invalid property naming strategy", PropertyNamingStrategy.SNAKE_CASE, objectMapper.getPropertyNamingStrategy());
         Assert.assertEquals("Invalid mixin count", 0, objectMapper.mixInCount());
     }
 
