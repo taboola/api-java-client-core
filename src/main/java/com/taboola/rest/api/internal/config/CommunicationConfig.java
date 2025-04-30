@@ -1,8 +1,6 @@
 package com.taboola.rest.api.internal.config;
 
 
-import java.util.Collection;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taboola.rest.api.exceptions.factories.ExceptionFactory;
 import com.taboola.rest.api.internal.StringResponseFactories;
@@ -24,6 +22,7 @@ public class CommunicationConfig {
     private final long writeTimeoutMillis;
     private final int maxIdleConnections;
     private final long keepAliveDurationMillis;
+    private final long callTimeoutMillis;
     private final boolean debug;
     private final RequestHeadersSupplier requestHeadersSupplier;
     private final ExceptionFactory exceptionFactory;
@@ -33,7 +32,7 @@ public class CommunicationConfig {
     private final CommunicationInterceptor communicationInterceptor;
 
     public CommunicationConfig(String baseUrl, Long connectionTimeoutMillis, Long readTimeoutMillis,
-                               Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis,
+                               Long writeTimeoutMillis, Integer maxIdleConnections, Long keepAliveDurationMillis, Long callTimeoutMillis,
                                RequestHeadersSupplier requestHeadersSupplier, boolean debug, ExceptionFactory exceptionFactory,
                                ObjectMapper objectMapper, StringResponseFactories stringResponseFactories, HttpLoggingLevel loggingLevel,
                                CommunicationInterceptor communicationInterceptor) {
@@ -44,6 +43,7 @@ public class CommunicationConfig {
         this.maxIdleConnections = maxIdleConnections;
         this.keepAliveDurationMillis = keepAliveDurationMillis;
         this.requestHeadersSupplier = requestHeadersSupplier;
+        this.callTimeoutMillis = callTimeoutMillis;
         this.debug = debug;
         this.exceptionFactory = exceptionFactory;
         this.objectMapper = objectMapper;
@@ -74,6 +74,10 @@ public class CommunicationConfig {
 
     public long getKeepAliveDurationMillis() {
         return keepAliveDurationMillis;
+    }
+
+    public long getCallTimeoutMillis() {
+        return callTimeoutMillis;
     }
 
     public RequestHeadersSupplier getRequestHeadersSupplier() {
@@ -112,6 +116,7 @@ public class CommunicationConfig {
                 ", readTimeoutMillis=" + readTimeoutMillis +
                 ", writeTimeoutMillis=" + writeTimeoutMillis +
                 ", maxIdleConnections=" + maxIdleConnections +
+                ", callTimeoutMillis=" + callTimeoutMillis +
                 ", keepAliveDurationMillis=" + keepAliveDurationMillis +
                 ", debug=" + debug +
                 ", requestHeadersSupplier=" + requestHeadersSupplier +

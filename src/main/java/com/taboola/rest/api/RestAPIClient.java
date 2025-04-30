@@ -53,7 +53,7 @@ public class RestAPIClient {
     }
 
     public static class RestAPIClientBuilder {
-        private static final String VERSION = "1.0.7";
+        private static final String VERSION = "1.0.8";
         private static final Integer DEFAULT_MAX_IDLE_CONNECTIONS = 5;
         private static final Long DEFAULT_KEEP_ALIVE_DURATION_MILLIS = 300_000L;
         private static final SerializationConfig DEFAULT_SERIALIZATION_CONFIG = new SerializationConfig();
@@ -69,6 +69,7 @@ public class RestAPIClient {
         private Long readTimeoutMillis;
         private Integer maxIdleConnections;
         private Long keepAliveDurationMillis;
+        private Long callTimeoutMillis;
         private Boolean debug;
         private SerializationConfig serializationConfig;
         private Collection<RequestHeader> headers;
@@ -127,6 +128,11 @@ public class RestAPIClient {
             return this;
         }
 
+        public RestAPIClientBuilder setCallTimeoutMillis(Long callTimeoutMillis) {
+            this.callTimeoutMillis = callTimeoutMillis;
+            return this;
+        }
+
         public RestAPIClientBuilder setDebug(Boolean debug) {
             this.debug = debug;
             return this;
@@ -179,7 +185,7 @@ public class RestAPIClient {
             RequestHeadersSupplier multiRequestHeadersSupplier = new MultiRequestHeadersSupplier(() -> headers, headersSupplier);
 
             CommunicationConfig config = new CommunicationConfig(baseUrl, connectionTimeoutMillis, readTimeoutMillis, writeTimeoutMillis, maxIdleConnections,
-                    keepAliveDurationMillis, multiRequestHeadersSupplier, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor);
+                    keepAliveDurationMillis, callTimeoutMillis, multiRequestHeadersSupplier, debug, exceptionFactory, objectMapper, stringResponseFactories, loggingLevel, communicationInterceptor);
             return new RestAPIClient(new CommunicationFactory(config));
         }
 
@@ -209,6 +215,10 @@ public class RestAPIClient {
 
             if (writeTimeoutMillis == null) {
                 writeTimeoutMillis = 0L;
+            }
+
+            if (callTimeoutMillis == null) {
+                callTimeoutMillis = 0L;
             }
 
             if (maxIdleConnections == null) {

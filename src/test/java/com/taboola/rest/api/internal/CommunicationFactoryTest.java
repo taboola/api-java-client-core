@@ -37,7 +37,7 @@ public class CommunicationFactoryTest {
     @Before
     public void beforeTest() {
         CommunicationConfig communicationConfig = new CommunicationConfig("http://localhost",
-                1L, 1L, 1L, 1, 60L,
+                1L, 1L, 1L, 1, 60L, 1L,
                 () -> Collections.singleton(new UserAgentHeader("Dummy-Agent")), true, new DefaultExceptionFactory(),
                 new ObjectMapper(), new StringResponseFactories(), HttpLoggingLevel.BASIC, new NoOpCommunicationInterceptor());
         testInstance = new CommunicationFactory(communicationConfig);
